@@ -1,0 +1,51 @@
+{
+  "name": "sdk-playground",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Playground for SDK",
+  "license": "ISC",
+  "author": "Piter",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ensofinance/sdk": "^1.1.7",
+    "@radix-ui/react-icons": "^1.3.2",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@shadcn/ui": "^0.0.4",
+    "@summer_fi/sdk-client": "2.0.2",
+    "@tanstack/react-query": "5.87.4",
+    "bignumber.js": "^9.3.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "connectkit": "^1.9.1",
+    "dotenv": "^16.5.0",
+    "next": "^14.2.32",
+    "node-fetch": "^2.7.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.20.5",
+    "typescript": "^5.8.3",
+    "viem": "latest",
+    "wagmi": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.3",
+    "@types/react": "^18.3.1",
+    "@wagmi/cli": "latest",
+    "autoprefixer": "^10",
+    "eslint": "^8.15.0",
+    "eslint-config-next": "^14.0.4",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
+}
