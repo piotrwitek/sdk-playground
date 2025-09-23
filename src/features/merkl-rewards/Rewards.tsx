@@ -1,16 +1,19 @@
 import React from "react";
 import { useAccount } from "wagmi";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import fetchRewards from "@/fetchers/fetchRewards";
 import type { AggregatedRewards } from "@/types";
-import { AddressInput } from "@/components/shared/AddressInput";
+import { SupportedChainIds } from "@/sdk/chains";
+import { UserInputSection } from "@/components/shared/UserInputSection";
 import { formatRewardValue } from "./formatRewardValue";
 
 export const Rewards: React.FC = () => {
   const { address: connectedAddress, isConnected } = useAccount();
   const [inputAddress, setInputAddress] = React.useState<string>("");
+  const [chainId, setChainId] = React.useState<number>(
+    SupportedChainIds.Base
+  );
 
   // Default to connected wallet on mount or when wallet changes
   React.useEffect(() => {
@@ -23,9 +26,9 @@ export const Rewards: React.FC = () => {
     AggregatedRewards,
     Error
   >({
-    queryKey: ["rewards", inputAddress],
-    queryFn: () => fetchRewards(inputAddress ?? ""),
-    enabled: !!inputAddress,
+    queryKey: ["rewards", inputAddress, chainId],
+    queryFn: () => fetchRewards(inputAddress ?? "", chainId),
+    enabled: !!inputAddress && !!chainId,
   });
 
   // Compute sum of constituent parts as bigint (if present)
@@ -48,15 +51,15 @@ export const Rewards: React.FC = () => {
     <div className="p-4">
       <h2 className="text-2xl font-semibold mb-4">Rewards</h2>
 
-      <div className="mb-4 flex items-center justify-between">
-        <AddressInput
-          value={inputAddress}
-          onChange={setInputAddress}
-          placeholder="Wallet address"
+      <div className="mb-4">
+        <UserInputSection
+          address={inputAddress}
+          chainId={chainId}
+          onAddressChange={setInputAddress}
+          onChainChange={setChainId}
+          onSubmit={() => refetch()}
+          showFetchButton={true}
         />
-        <Button onClick={() => refetch()} disabled={!inputAddress}>
-          Refresh
-        </Button>
       </div>
 
       {error && (

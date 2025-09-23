@@ -20,14 +20,27 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { address } = req.query;
+  const { address, chainId } = req.query;
   if (!address) {
     return res.status(400).json({ error: "address is required" });
   }
+  if (!chainId) {
+    return res.status(400).json({ error: "chainId is required" });
+  }
 
   try {
+    const parsedChainId = Number(chainId);
+    if (Number.isNaN(parsedChainId)) {
+      return res.status(400).json({ error: "chainId must be a number" });
+    }
+
+    const resolvedChainId =
+      SupportedChainIds[
+        parsedChainId as unknown as keyof typeof SupportedChainIds
+      ] ?? parsedChainId;
+
     const user = User.createFromEthereum(
-      SupportedChainIds.Base,
+      resolvedChainId,
       address as `0x${string}`
     );
     const data = await sdk.armada.users.getAggregatedRewardsIncludingMerkl({

@@ -1,11 +1,15 @@
 import type { AggregatedRewards } from "@/types";
 
 export default async function fetchRewards(
-  address: string
+  address: string,
+  chainId: number
 ): Promise<AggregatedRewards> {
   if (!address) throw new Error("Address is required");
+  if (!chainId) throw new Error("chainId is required");
 
-  const resp = await fetch(`/api/rewards?address=${address}`);
+  const resp = await fetch(
+    `/api/rewards?address=${address}&chainId=${chainId}`
+  );
 
   if (!resp.ok) {
     throw new Error(`Failed to fetch rewards: ${resp.statusText}`);
