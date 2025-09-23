@@ -12,6 +12,7 @@ const navigationItems: NavigationItem[] = [
   { href: "/cross-chain", label: "Cross-chain" },
   { href: "/positions", label: "Positions" },
   { href: "/merkl", label: "Merkl Rewards" },
+  { href: "/rewards", label: "Rewards" },
 ];
 
 export function Navigation() {

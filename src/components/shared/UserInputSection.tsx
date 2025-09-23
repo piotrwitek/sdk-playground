@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "../ui/button";
 import { ChainSelector } from "./ChainSelector";
+import { AddressInput } from "./AddressInput";
 import { cn } from "../../lib/utils";
 
 interface UserInputSectionProps {
@@ -26,11 +27,10 @@ export const UserInputSection: React.FC<UserInputSectionProps> = ({
 }) => {
   return (
     <div className={cn("flex gap-2 mb-4", className)}>
-      <input
-        className="border px-2 py-1 rounded w-80"
+      <AddressInput
+        value={address}
+        onChange={onAddressChange}
         placeholder={addressPlaceholder}
-        value={address ?? ""}
-        onChange={(e) => onAddressChange(e.target.value)}
       />
       <ChainSelector
         value={chainId}

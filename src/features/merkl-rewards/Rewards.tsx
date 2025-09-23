@@ -6,17 +6,26 @@ import { useQuery } from "@tanstack/react-query";
 import fetchRewards from "@/fetchers/fetchRewards";
 import type { AggregatedRewards } from "@/types";
 import { formatAnyNumericValue } from "@/lib/formatters";
+import { AddressInput } from "@/components/shared/AddressInput";
 
 export const Rewards: React.FC = () => {
-  const { address, isConnected } = useAccount();
+  const { address: connectedAddress, isConnected } = useAccount();
+  const [inputAddress, setInputAddress] = React.useState<string>("");
+
+  // Default to connected wallet on mount or when wallet changes
+  React.useEffect(() => {
+    if (isConnected && connectedAddress && !inputAddress) {
+      setInputAddress(connectedAddress);
+    }
+  }, [isConnected, connectedAddress, inputAddress]);
 
   const { data, isLoading, refetch, error } = useQuery<
     AggregatedRewards,
     Error
   >({
-    queryKey: ["rewards", address],
-    queryFn: () => fetchRewards(address ?? ""),
-    enabled: isConnected && !!address,
+    queryKey: ["rewards", inputAddress],
+    queryFn: () => fetchRewards(inputAddress ?? ""),
+    enabled: !!inputAddress,
   });
 
   return (
@@ -24,12 +33,14 @@ export const Rewards: React.FC = () => {
       <h2 className="text-2xl font-semibold mb-4">Rewards</h2>
 
       <div className="mb-4 flex items-center justify-between">
-        <div />
-        <div>
-          <Button onClick={() => refetch()} disabled={!isConnected}>
-            Refresh
-          </Button>
-        </div>
+        <AddressInput
+          value={inputAddress}
+          onChange={setInputAddress}
+          placeholder="Wallet address"
+        />
+        <Button onClick={() => refetch()} disabled={!inputAddress}>
+          Refresh
+        </Button>
       </div>
 
       {error && (
