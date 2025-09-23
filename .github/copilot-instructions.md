@@ -181,6 +181,17 @@ Types organized in `src/types/` by domain:
 - `transaction.ts` - Transaction metadata and mapping utilities
 - `merkl.ts` - Merkl protocol integration types
 
+### Scaffolding Checklist (Important)
+
+- When adding a new feature that introduces data shapes or responses, ALWAYS add the corresponding types to `src/types/` and import them with `@/types` index file.
+- Do not define domain types inline inside fetchers or components — keep them in `src/types/` to follow project conventions and ensure consistency.
+- For API routes, convert SDK `bigint` values to `string` for JSON, and define the JSON shape in `src/types/`, then in the fetcher wrap it back into bigint.
+
+### Type Import Convention
+
+- **Central index:** Import project domain types from the central index: `import type { Foo, Bar } from "@/types";`.
+- **Update the index:** When adding new files under `src/types/`, also export them from `src/types/index.ts` so they become available via `@/types`.
+
 ## Key Integration Points & Workflows
 
 ### Cross-chain Flow Architecture

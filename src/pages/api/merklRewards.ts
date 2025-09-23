@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { MerklRewardsResponse } from "../../types/merkl";
+import type { MerklRewardsResponse } from "@/types";
 import { sdk } from "../../clients/sdk-client";
 
 export default async function handler(
@@ -17,9 +17,8 @@ export default async function handler(
   }
 
   try {
-    const userMerklRewards = await sdk.armada.users.getUserMerklRewards({
-      address,
-    });
+  const addr = String(address) as `0x${string}`;
+  const userMerklRewards = await sdk.armada.users.getUserMerklRewards({ address: addr });
     const result = userMerklRewards as MerklRewardsResponse;
 
     res.status(200).json(result);

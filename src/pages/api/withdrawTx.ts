@@ -11,8 +11,8 @@ import { sdk } from "../../clients/sdk-client";
 import {
   mapSdkTransactionToTransaction,
   Transaction,
-} from "../../types/transaction";
-import type { WithdrawParams } from "../../types/withdraw";
+  WithdrawParams,
+} from "@/types";
 
 const createTransactions = async ({
   chainId,

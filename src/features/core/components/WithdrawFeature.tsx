@@ -1,6 +1,6 @@
 import { TransactionExecutor } from "../../../components/shared/TransactionExecutor";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
-import type { WithdrawParams } from "../../../types/withdraw";
+import type { WithdrawParams } from "@/types";
 import { type AddressValue, type ChainId } from "@summer_fi/sdk-client";
 import { useAccount } from "wagmi";
 import { fetchWithdrawTx } from "../../../fetchers/fetchWithdrawTx";

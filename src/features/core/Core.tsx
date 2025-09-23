@@ -5,7 +5,7 @@ import { VaultSelector } from "../../components/shared/VaultSelector";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { type ChainId, type AddressValue } from "@summer_fi/sdk-client";
-import type { VaultInfo } from "../../types/vault";
+import type { VaultInfo } from "@/types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PersonIcon } from "@radix-ui/react-icons";
 import { SupportedChainIds } from "../../sdk/chains";

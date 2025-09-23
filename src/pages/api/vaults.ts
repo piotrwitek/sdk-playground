@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { sdk } from "../../clients/sdk-client";
-import type { VaultInfo, VaultsParams } from "../../types/vault";
+import type { VaultInfo, VaultsParams } from "@/types";
 
 const fetchVaults = async ({ chainId }: VaultsParams): Promise<VaultInfo[]> => {
   // you can retrieve all user positions on a particular chain

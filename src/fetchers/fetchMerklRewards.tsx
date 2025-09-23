@@ -1,4 +1,4 @@
-import type { MerklRewardsResponse } from "../types/merkl";
+import type { MerklRewardsResponse } from "@/types";
 
 export const fetchMerklRewards = async (
   chainId: number,

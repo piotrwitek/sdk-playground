@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "../ui/button";
-import { formatApy, formatNumber } from "../../lib/formatters";
+import { formatApy, formatAnyNumericValue } from "../../lib/formatters";
 import type { AddressValue, ChainId } from "@summer_fi/sdk-client";
-import type { VaultInfo } from "../../types/vault";
+import type { VaultInfo } from "@/types";
 import { truncateHex } from "../../lib/truncators";
 
 interface VaultSelectorProps {
@@ -43,13 +43,13 @@ function VaultTile({ vault, onSelect }: VaultTileProps) {
               Deposit Cap:
             </span>
             <p className="font-medium">
-              {formatNumber(vault.depositCap)} {vault.assetToken}
+              {formatAnyNumericValue(vault.depositCap)} {vault.assetToken}
             </p>
           </div>
           <div className="space-y-1">
             <span className="font-semibold text-foreground block">TVL:</span>
             <p className="font-medium">
-              {formatNumber(vault.tvl)} {vault.assetToken}
+              {formatAnyNumericValue(vault.tvl)} {vault.assetToken}
             </p>
           </div>
         </div>
@@ -68,20 +68,13 @@ function VaultTile({ vault, onSelect }: VaultTileProps) {
   );
 }
 
-export function VaultSelector({
-  chainId,
-  value,
-  onValueChange,
-  onVaultSelected,
-  className = "",
-  hideLabel = false,
-}: VaultSelectorProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+// Add the hook to memoize fetchVaults and expose state
+function useVaults(chainId: ChainId) {
   const [vaults, setVaults] = useState<VaultInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchVaults = async () => {
+  const fetchVaults = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -106,19 +99,34 @@ export function VaultSelector({
     } finally {
       setLoading(false);
     }
-  };
-
-  // Fetch vaults on mount and when chainId changes
-  useEffect(() => {
-    fetchVaults();
   }, [chainId]);
 
-  // Refresh data when modal opens
+  useEffect(() => {
+    // run once on mount and whenever chainId changes (fetchVaults is stable)
+    void fetchVaults();
+  }, [fetchVaults]);
+
+  return { vaults, loading, error, fetchVaults, setVaults };
+}
+
+export function VaultSelector({
+  chainId,
+  value,
+  onValueChange,
+  onVaultSelected,
+  className = "",
+  hideLabel = false,
+}: VaultSelectorProps) {
+  // Replace component-local states for vaults/loading/error with the hook
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { vaults, loading, error, fetchVaults } = useVaults(chainId);
+
+  // Fetch when opening modal if needed (hook provides fetchVaults)
   const handleOpenModal = () => {
     setIsModalOpen(true);
     // Only fetch if we don't have data or if there was an error
     if (vaults.length === 0 && !loading) {
-      fetchVaults();
+      void fetchVaults();
     }
   };
 

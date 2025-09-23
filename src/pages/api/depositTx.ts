@@ -11,8 +11,8 @@ import { sdk } from "../../clients/sdk-client";
 import {
   mapSdkTransactionToTransaction,
   Transaction,
-} from "../../types/transaction";
-import type { DepositParams } from "../../types/deposit";
+  DepositParams,
+} from "@/types";
 
 async function createTransactions({
   chainId,

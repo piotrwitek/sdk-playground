@@ -1,3 +1,5 @@
+import { BigNumber } from "bignumber.js";
+
 /**
  * Format APY as percentage with 2 decimal places
  * @param apy - APY value as string or number
@@ -13,22 +15,33 @@ export function formatApy(apy: string | number): string {
 }
 
 /**
- * Format big numbers in human readable format
- * @param value - Numeric value as string or number
- * @returns Human readable string (e.g., "1.4K", "7.06M", "2.15B")
+ * Formats any numeric value with K/M/B suffixes. Defaults to 2 decimal places.
+ * @param value - bigint, number, string, or undefined
+ * @param decimals - decimal places (default: 2)
+ * @returns formatted string (e.g., "1.40K", "7.06M", "2.15B")
  */
-export function formatNumber(value: string | number): string {
-  const numericValue = typeof value === "string" ? parseFloat(value) : value;
-  if (isNaN(numericValue)) return value.toString();
+export function formatAnyNumericValue(value: bigint | string | number | undefined, decimals: number = 2): string {
+  if (value === undefined || value === null) return "-";
 
-  if (numericValue >= 1e9) {
-    return `${(numericValue / 1e9).toFixed(2)}B`;
-  } else if (numericValue >= 1e6) {
-    return `${(numericValue / 1e6).toFixed(2)}M`;
-  } else if (numericValue >= 1e3) {
-    return `${(numericValue / 1e3).toFixed(1)}K`;
-  } else {
-    return numericValue.toFixed(2);
+  try {
+    const bn = BigNumber(value.toString());
+    if (!bn.isFinite() || bn.isNaN()) return value?.toString() || "-";
+
+    const billion = BigNumber(1e9);
+    const million = BigNumber(1e6);
+    const thousand = BigNumber(1e3);
+
+    if (bn.gte(billion)) {
+      return `${bn.div(billion).toFixed(decimals)}B`;
+    } else if (bn.gte(million)) {
+      return `${bn.div(million).toFixed(decimals)}M`;
+    } else if (bn.gte(thousand)) {
+      return `${bn.div(thousand).toFixed(decimals)}K`;
+    } else {
+      return bn.toFixed(decimals);
+    }
+  } catch {
+    return value?.toString() || "-";
   }
 }
 
@@ -48,7 +61,7 @@ export function formatNumberWithUnit(valueWithUnit: string): string {
   }
 
   const [numberPart, unit] = parts;
-  const formattedNumber = formatNumber(numberPart);
+  const formattedNumber = formatAnyNumericValue(numberPart);
 
   return `${formattedNumber} ${unit}`;
 }

@@ -1,6 +1,6 @@
 import { TransactionExecutor } from "../../../components/shared/TransactionExecutor";
 import { ArrowDownIcon } from "@radix-ui/react-icons";
-import type { DepositParams } from "../../../types/deposit";
+import type { DepositParams } from "@/types";
 import { type AddressValue, type ChainId } from "@summer_fi/sdk-client";
 import { useAccount } from "wagmi";
 import { fetchDepositTx } from "../../../fetchers/fetchDepositTx";

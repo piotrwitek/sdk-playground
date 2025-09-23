@@ -7,7 +7,7 @@ import {
 } from "wagmi";
 import { type ChainId, type AddressValue } from "@summer_fi/sdk-client";
 import { fetchCrossChainTx } from "../../fetchers/fetchCrossChainTx";
-import type { CrossChainParams } from "../../types/cross-chain";
+import type { CrossChainParams, VaultInfo } from "@/types";
 import { SUPPORTED_TOKENS, type TokenSymbol } from "../../lib/tokens-config";
 import { ChainSelector } from "../../components/shared/ChainSelector";
 import { VaultSelector } from "../../components/shared/VaultSelector";
@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { VaultInfo } from "../../types/vault";
+
 import {
   PersonIcon,
   ArrowRightIcon,

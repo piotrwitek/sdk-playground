@@ -1,5 +1,4 @@
-import type { DepositParams } from "../types/deposit";
-import type { Transaction } from "../types/transaction";
+import type { DepositParams, Transaction } from "@/types";
 
 export async function fetchDepositTx(
   params: DepositParams

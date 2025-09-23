@@ -5,7 +5,7 @@ import {
 } from "@summer_fi/sdk-client";
 import { sdk } from "../../clients/sdk-client";
 import { ensoClient } from "../../clients/enso-client";
-import type { CrossChainParams } from "../../types/cross-chain";
+import type { CrossChainParams } from "@/types";
 import type { BundleAction } from "@ensofinance/sdk";
 
 export async function createEnsoTxData({

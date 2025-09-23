@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
 import { cn } from "../../lib/utils";
 import { truncateHex } from "../../lib/truncators";
-import type { MerklRewardsResponse } from "../../types/merkl";
+import type { MerklRewardsResponse } from "@/types";
 import { fetchMerklRewards } from "../../fetchers/fetchMerklRewards";
 import { UserInputSection } from "../../components/shared/UserInputSection";
 import { Card, CardContent } from "../../components/ui/card";

@@ -1,4 +1,4 @@
-import type { CrossChainParams } from "../types/cross-chain";
+import type { CrossChainParams } from "@/types";
 import type { TxData } from "../features/cross-chain-deposit/CrossChainDeposit";
 
 export async function fetchCrossChainTx(

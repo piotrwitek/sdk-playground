@@ -1,5 +1,4 @@
-import type { Transaction } from "../types/transaction";
-import type { WithdrawParams } from "../types/withdraw";
+import type { Transaction, WithdrawParams } from "@/types";
 
 export async function fetchWithdrawTx(
   params: WithdrawParams
