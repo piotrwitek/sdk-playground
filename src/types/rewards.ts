@@ -1,7 +1,7 @@
 export type AggregatedRewards = {
-  total: bigint;
-  vaultUsagePerChain: Record<number, bigint>;
-  vaultUsage: bigint;
-  merkleDistribution: bigint;
-  voteDelegation: bigint;
+  total: string;
+  vaultUsagePerChain: Record<number, string>;
+  vaultUsage: string;
+  merkleDistribution: string;
+  voteDelegation: string;
 };

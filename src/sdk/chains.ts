@@ -1,7 +1,5 @@
-import type { ChainId } from "@summer_fi/sdk-client";
-
 // Define supported chain IDs
-export const SupportedChainIds: Record<string, ChainId> = {
+export const SupportedChainIds = {
   Mainnet: 1,
   Base: 8453,
   ArbitrumOne: 42161,

@@ -15,16 +15,5 @@ export default async function fetchRewards(
 
   if (json.error) throw new Error(json.error);
 
-  return {
-    total: BigInt(json.total),
-    vaultUsagePerChain: Object.fromEntries(
-      Object.entries(json.vaultUsagePerChain).map(([k, v]) => [
-        Number(k),
-        BigInt(String(v)),
-      ])
-    ),
-    vaultUsage: BigInt(json.vaultUsage),
-    merkleDistribution: BigInt(json.merkleDistribution),
-    voteDelegation: BigInt(json.voteDelegation),
-  };
+  return json;
 }

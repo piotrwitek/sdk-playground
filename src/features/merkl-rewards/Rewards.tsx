@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import fetchRewards from "@/fetchers/fetchRewards";
 import type { AggregatedRewards } from "@/types";
-import { formatAnyNumericValue } from "@/lib/formatters";
 import { AddressInput } from "@/components/shared/AddressInput";
+import { formatRewardValue } from "./formatRewardValue";
 
 export const Rewards: React.FC = () => {
   const { address: connectedAddress, isConnected } = useAccount();
@@ -27,6 +27,22 @@ export const Rewards: React.FC = () => {
     queryFn: () => fetchRewards(inputAddress ?? ""),
     enabled: !!inputAddress,
   });
+
+  // Compute sum of constituent parts as bigint (if present)
+  const sumOfConstituents: bigint | undefined = React.useMemo(() => {
+    if (!data) return undefined;
+    const a = BigInt(data.vaultUsage) ?? BigInt(0);
+    const b = BigInt(data.merkleDistribution) ?? BigInt(0);
+    const c = BigInt(data.voteDelegation) ?? BigInt(0);
+    return a + b + c;
+  }, [data]);
+
+  // Compute difference total - sum
+  const difference: bigint | undefined = React.useMemo(() => {
+    if (!data || sumOfConstituents === undefined || data.total === undefined)
+      return undefined;
+    return BigInt(data.total) - sumOfConstituents;
+  }, [data, sumOfConstituents]);
 
   return (
     <div className="p-4">
@@ -69,7 +85,7 @@ export const Rewards: React.FC = () => {
             <CardContent>
               {isLoading
                 ? "Loading..."
-                : formatAnyNumericValue(data ? data.total : undefined)}
+                : formatRewardValue(data ? data.total : undefined)}
             </CardContent>
           </Card>
 
@@ -80,7 +96,7 @@ export const Rewards: React.FC = () => {
             <CardContent>
               {isLoading
                 ? "Loading..."
-                : formatAnyNumericValue(data ? data.vaultUsage : undefined)}
+                : formatRewardValue(data ? data.vaultUsage : undefined)}
             </CardContent>
           </Card>
 
@@ -91,9 +107,7 @@ export const Rewards: React.FC = () => {
             <CardContent>
               {isLoading
                 ? "Loading..."
-                : formatAnyNumericValue(
-                    data ? data.merkleDistribution : undefined
-                  )}
+                : formatRewardValue(data ? data.merkleDistribution : undefined)}
             </CardContent>
           </Card>
 
@@ -104,7 +118,46 @@ export const Rewards: React.FC = () => {
             <CardContent>
               {isLoading
                 ? "Loading..."
-                : formatAnyNumericValue(data ? data.voteDelegation : undefined)}
+                : formatRewardValue(data ? data.voteDelegation : undefined)}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Constituents Sum Check</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading && "Loading..."}
+              {!isLoading && (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <div>Total (Vault + Merkl + Vote)</div>
+                    <div>
+                      {formatRewardValue(sumOfConstituents?.toString())}
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div>Reported Total</div>
+                    <div>
+                      {formatRewardValue(data ? data.total : undefined)}
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div>Difference</div>
+                    <div>
+                      {difference === undefined
+                        ? "-"
+                        : difference === BigInt(0)
+                        ? "Match ✅"
+                        : `${formatRewardValue(difference.toString())} ${
+                            difference > BigInt(0)
+                              ? "(total > sum)"
+                              : "(sum > total)"
+                          }`}
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -120,9 +173,7 @@ export const Rewards: React.FC = () => {
                     ([chain, value]) => (
                       <div key={chain} className="flex justify-between">
                         <div>Chain {chain}</div>
-                        <div>
-                          {formatAnyNumericValue(value as unknown as bigint)}
-                        </div>
+                        <div>{formatRewardValue(value)}</div>
                       </div>
                     )
                   )}

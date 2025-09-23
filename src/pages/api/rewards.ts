@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { sdk } from "../../clients/sdk-client";
 import { User } from "@summer_fi/sdk-client";
+import { SupportedChainIds } from "../../sdk/chains";
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,10 +26,15 @@ export default async function handler(
   }
 
   try {
-    const user = User.createFromEthereum(1, address as `0x${string}`);
+    const user = User.createFromEthereum(
+      SupportedChainIds.Base,
+      address as `0x${string}`
+    );
     const data = await sdk.armada.users.getAggregatedRewardsIncludingMerkl({
       user,
     });
+
+    console.log("Aggregated rewards data:", data);
 
     // Convert bigint values to string for JSON serialization
     const result = {

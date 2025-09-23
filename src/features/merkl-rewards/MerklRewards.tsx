@@ -200,9 +200,7 @@ const TokenRewardCard: React.FC<TokenRewardCardProps> = ({ reward }) => {
 
 export const MerklRewards: React.FC = () => {
   const { address: connectedAddress } = useAccount();
-  const [address, setAddress] = useState<string | undefined>(
-    "0x805769AA22219E3a29b301Ab5897B903A9ad2C4A"
-  );
+  const [address, setAddress] = useState<string | undefined>(connectedAddress);
   const [chainId, setChainId] = useState<number>(SupportedChainIds.Base);
 
   useEffect(() => {
