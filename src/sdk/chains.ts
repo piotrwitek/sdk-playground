@@ -4,7 +4,7 @@ export const SupportedChainIds = {
   Base: 8453,
   ArbitrumOne: 42161,
   Sonic: 146,
-};
+} as const;
 
 // Function to get the chain name by its ID
 export const getChainName = (chainId: string | number): string => {

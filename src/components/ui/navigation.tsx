@@ -8,7 +8,7 @@ interface NavigationItem {
 }
 
 const navigationItems: NavigationItem[] = [
-  { href: "/", label: "Core" },
+  { href: "/", label: "Vaults" },
   { href: "/cross-chain", label: "Cross-chain" },
   { href: "/positions", label: "Positions" },
   { href: "/merkl", label: "Merkl Rewards" },

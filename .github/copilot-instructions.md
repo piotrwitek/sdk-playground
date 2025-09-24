@@ -20,7 +20,7 @@ This is a Next.js 14 DeFi SDK playground demonstrating cross-chain operations us
 
 Components organized by domain in `src/features/`:
 
-- `src/features/core/` - Main vault operations (deposit/withdraw)
+- `src/features/vaults/` - Main vault operations (deposit/withdraw)
 - `src/features/cross-chain-deposit/` - Cross-chain bridging workflows
 
 ### SDK Client Pattern

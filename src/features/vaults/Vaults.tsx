@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PersonIcon } from "@radix-ui/react-icons";
 import { SupportedChainIds } from "../../sdk/chains";
 
-export default function Core() {
+export default function Vaults() {
   const { address, isConnected } = useAccount();
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
     SupportedChainIds.Base
