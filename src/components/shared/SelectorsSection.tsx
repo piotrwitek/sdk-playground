@@ -16,15 +16,12 @@ export const SelectorsSection: React.FC<UserInputSectionProps> = ({
   className,
   showFetchButton = false,
 }) => {
-  const { UserAddressModal: Modal, UserAddressSelector: AddressSelector } =
-    useUserAddress();
+  const { UserAddressSelector } = useUserAddress();
   const { chainId, setChainId } = useGlobalState();
 
   return (
-    <div className={cn("flex gap-2 mb-4", className)}>
-      <AddressSelector />
-      {/* Render modal for editing the user address */}
-      <Modal />
+    <div className={cn("flex items-center gap-2 mb-4", className)}>
+      <UserAddressSelector />
 
       <ChainSelector
         value={chainId}
@@ -32,7 +29,7 @@ export const SelectorsSection: React.FC<UserInputSectionProps> = ({
         className="w-36"
         hideLabel={true}
       />
-      {showFetchButton && <Button onClick={onSubmit}>Fetch</Button>}
+      {showFetchButton && <Button onClick={onSubmit}>Refetch</Button>}
     </div>
   );
 };

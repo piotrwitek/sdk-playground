@@ -235,7 +235,7 @@ export const MerklRewards: React.FC = () => {
     <div className={cn("p-4")}>
       <h2 className="text-2xl font-semibold mb-4">Merkl Rewards</h2>
 
-      <SelectorsSection onSubmit={refetch} className="mb-6" />
+      <SelectorsSection onSubmit={refetch} />
 
       {isLoading && (
         <Card>

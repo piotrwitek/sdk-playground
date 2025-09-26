@@ -122,6 +122,7 @@ export function useUserAddress() {
             </span>
           </div>
         </button>
+        <UserAddressModal />
       </div>
     );
   };
@@ -131,7 +132,6 @@ export function useUserAddress() {
     setUserAddress,
     openUserAddressModal,
     closeUserAddressModal,
-    UserAddressModal,
     UserAddressSelector,
   } as const;
 }
