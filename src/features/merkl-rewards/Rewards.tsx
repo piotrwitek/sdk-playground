@@ -1,5 +1,4 @@
 import React from "react";
-import { useAccount } from "wagmi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import fetchRewards from "@/fetchers/fetchRewards";
@@ -9,7 +8,6 @@ import { SelectorsSection } from "@/components/shared/SelectorsSection";
 import { formatRewardValue } from "./formatRewardValue";
 
 export const Rewards: React.FC = () => {
-  const { isConnected } = useAccount();
   const { chainId, userAddress } = useGlobalState();
 
   const { data, isLoading, refetch, error } = useQuery<
@@ -53,122 +51,107 @@ export const Rewards: React.FC = () => {
         </Card>
       )}
 
-      {!isConnected && (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Connect Wallet</CardTitle>
+            <CardTitle>Total Rewards</CardTitle>
           </CardHeader>
-          <CardContent>Please connect your wallet to view rewards.</CardContent>
+          <CardContent>
+            {isLoading
+              ? "Loading..."
+              : formatRewardValue(data ? data.total : undefined)}
+          </CardContent>
         </Card>
-      )}
 
-      {isConnected && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Total Rewards</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading
-                ? "Loading..."
-                : formatRewardValue(data ? data.total : undefined)}
-            </CardContent>
-          </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Vault Usage</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading
+              ? "Loading..."
+              : formatRewardValue(data ? data.vaultUsage : undefined)}
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Vault Usage</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading
-                ? "Loading..."
-                : formatRewardValue(data ? data.vaultUsage : undefined)}
-            </CardContent>
-          </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Merkl Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading
+              ? "Loading..."
+              : formatRewardValue(data ? data.merkleDistribution : undefined)}
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Merkl Distribution</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading
-                ? "Loading..."
-                : formatRewardValue(data ? data.merkleDistribution : undefined)}
-            </CardContent>
-          </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Vote Delegation</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading
+              ? "Loading..."
+              : formatRewardValue(data ? data.voteDelegation : undefined)}
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Vote Delegation</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading
-                ? "Loading..."
-                : formatRewardValue(data ? data.voteDelegation : undefined)}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Constituents Sum Check</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading && "Loading..."}
-              {!isLoading && (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <div>Total (Vault + Merkl + Vote)</div>
-                    <div>
-                      {formatRewardValue(sumOfConstituents?.toString())}
-                    </div>
-                  </div>
-                  <div className="flex justify-between">
-                    <div>Reported Total</div>
-                    <div>
-                      {formatRewardValue(data ? data.total : undefined)}
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div>Difference</div>
-                    <div>
-                      {difference === undefined
-                        ? "-"
-                        : difference === BigInt(0)
-                        ? "Match ✅"
-                        : `${formatRewardValue(difference.toString())} ${
-                            difference > BigInt(0)
-                              ? "(total > sum)"
-                              : "(sum > total)"
-                          }`}
-                    </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Constituents Sum Check</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading && "Loading..."}
+            {!isLoading && (
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <div>Total (Vault + Merkl + Vote)</div>
+                  <div>{formatRewardValue(sumOfConstituents?.toString())}</div>
+                </div>
+                <div className="flex justify-between">
+                  <div>Reported Total</div>
+                  <div>{formatRewardValue(data ? data.total : undefined)}</div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div>Difference</div>
+                  <div>
+                    {difference === undefined
+                      ? "-"
+                      : difference === BigInt(0)
+                      ? "Match ✅"
+                      : `${formatRewardValue(difference.toString())} ${
+                          difference > BigInt(0)
+                            ? "(total > sum)"
+                            : "(sum > total)"
+                        }`}
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-          <Card className="col-span-1 sm:col-span-2 lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Vault Usage Per Chain</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading && "Loading..."}
-              {!isLoading && data?.vaultUsagePerChain && (
-                <div className="space-y-2">
-                  {Object.entries(data.vaultUsagePerChain).map(
-                    ([chain, value]) => (
-                      <div key={chain} className="flex justify-between">
-                        <div>Chain {chain}</div>
-                        <div>{formatRewardValue(value)}</div>
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        <Card className="col-span-1 sm:col-span-2 lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Vault Usage Per Chain</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading && "Loading..."}
+            {!isLoading && data?.vaultUsagePerChain && (
+              <div className="space-y-2">
+                {Object.entries(data.vaultUsagePerChain).map(
+                  ([chain, value]) => (
+                    <div key={chain} className="flex justify-between">
+                      <div>Chain {chain}</div>
+                      <div>{formatRewardValue(value)}</div>
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
