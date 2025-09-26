@@ -189,7 +189,7 @@ Types organized in `src/types/` by domain:
 
 ### Type Import Convention
 
-- **Central index:** Import project domain types from the central index: `import type { Foo, Bar } from "@/types";`.
+- **Central index:** Import project domain types from the central index: `import type { Foo, Bar } from "@/types"`.
 - **Update the index:** When adding new files under `src/types/`, also export them from `src/types/index.ts` so they become available via `@/types`.
 
 ## Key Integration Points & Workflows
@@ -223,3 +223,57 @@ Types organized in `src/types/` by domain:
 - wagmi + React Query caching for optimal API call management
 - Use Tailwind v3.x for compatibility (`pnpm add -D tailwindcss@^3`)
 - Environment variables in `.env.local` for development, never commit API keys
+
+## Global State Layer (new)
+
+- `src/context/GlobalStateContext.tsx` - a lightweight global state provider introduced to hold app-wide values such as `userAddress`.
+- Hook: `useGlobalState()` returns `{ userAddress?: string, setUserAddress: (addr?: string) => void }` and must be used only inside the provider.
+- The provider is wired into the app inside `src/context/Web3Provider.tsx`, so it's available app-wide.
+- Persistence: selected state values are automatically persisted to `localStorage` and restored on mount.
+
+## Shared modal hook
+
+We've introduced a small reusable modal hook to keep UI components tidy and modal state isolated:
+
+- `src/hooks/shared/useModal.tsx` - exports `useModal(initialOpen?: boolean)` which returns { isOpen, open, close, toggle }.
+
+Pattern: build small, specialized modal hooks that compose `useModal` and return both control functions and a presentational `Modal` component. Example (simplified):
+
+```tsx
+// hooks/useMyFeatureModal.tsx
+import { useModal } from "@/hooks/shared/useModal";
+import React from "react";
+
+export function useMyFeatureModal() {
+  const modal = useModal(false);
+
+  function Modal() {
+    if (!modal.isOpen) return null;
+    return (
+      <div className="fixed inset-0 z-50">
+        <div onClick={modal.close} />
+        <div className="p-4">My modal content</div>
+      </div>
+    );
+  }
+
+  return { openModal: modal.open, closeModal: modal.close, Modal } as const;
+}
+```
+
+Usage in layout or components:
+
+```tsx
+const myModal = useMyFeatureModal();
+return (
+  <>
+    <button onClick={myModal.openModal}>Open</button>
+    <myModal.Modal />
+  </>
+);
+```
+
+Notes:
+
+- Keep presentational JSX inside the specialized hook (or move it into a small component) to fully encapsulate modal layout and behavior.
+- This pattern keeps parent components clean and focused on layout while specialized hooks handle modal logic and UI.

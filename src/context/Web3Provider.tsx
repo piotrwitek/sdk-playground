@@ -3,6 +3,7 @@ import React from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { GlobalStateProvider } from "./GlobalStateContext";
 import { arbitrum, base, mainnet, sonic } from "wagmi/chains";
 
 const config = createConfig(
@@ -30,7 +31,10 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider debugMode>{children}</ConnectKitProvider>
+        <ConnectKitProvider debugMode>
+          {/* Global state provider for app-wide values like userAddress */}
+          <GlobalStateProvider>{children}</GlobalStateProvider>
+        </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
