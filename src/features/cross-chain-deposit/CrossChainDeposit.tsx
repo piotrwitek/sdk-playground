@@ -268,7 +268,7 @@ const CrossChainDeposit: React.FC = () => {
               <PersonIcon />
               <AlertDescription>
                 {!isConnected || !address
-                  ? "Connect your wallet to start cross-chain deposit"
+                  ? "Connect your wallet to start"
                   : sourceChainId === destinationChainId
                   ? "Source and destination chains must be different"
                   : !selectedVaultId || !selectedVault

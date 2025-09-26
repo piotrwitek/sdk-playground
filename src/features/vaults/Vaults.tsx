@@ -55,9 +55,7 @@ export default function Vaults() {
         <div className="mb-6">
           <Alert>
             <PersonIcon />
-            <AlertDescription>
-              Connect your wallet to start cross-chain deposit
-            </AlertDescription>
+            <AlertDescription>Connect your wallet to start</AlertDescription>
           </Alert>
         </div>
       ) : null}
