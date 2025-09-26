@@ -47,8 +47,6 @@ export default async function handler(
       user,
     });
 
-    console.log("Aggregated rewards data:", data);
-
     // Convert bigint values to string for JSON serialization
     const result = {
       total: data.total.toString(),
