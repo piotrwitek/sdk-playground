@@ -6,7 +6,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import React from "react";
 
-export function useUserAddressModal() {
+export function useUserAddress() {
   const { address: connectedAddress } = useAccount();
   const { userAddress, setUserAddress } = useGlobalState();
 
@@ -14,13 +14,13 @@ export function useUserAddressModal() {
   const [inputValue, setInputValue] = useState<string>(userAddress ?? "");
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  const openModal = () => {
+  const openUserAddressModal = () => {
     setInputValue(userAddress ?? "");
     setValidationError(null);
     modal.open();
   };
 
-  const closeModal = () => {
+  const closeUserAddressModal = () => {
     modal.close();
   };
 
@@ -43,19 +43,22 @@ export function useUserAddressModal() {
     if (connectedAddress) setInputValue(connectedAddress);
   };
 
-  const Modal: React.FC = () => {
+  const UserAddressModal: React.FC = () => {
     if (!modal.isOpen) return null;
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={closeUserAddressModal}
+        />
 
         <div className="relative bg-background rounded-lg shadow-lg w-full max-w-lg m-4">
           <div className="flex justify-between items-center p-4 border-b">
             <h2 className="text-lg font-semibold">Set User Address</h2>
             <button
               className="h-8 w-8 p-1 text-muted-foreground"
-              onClick={closeModal}
+              onClick={closeUserAddressModal}
               aria-label="Close"
             >
               <Cross2Icon />
@@ -84,7 +87,7 @@ export function useUserAddressModal() {
               </div>
 
               <div className="flex gap-2">
-                <Button variant="ghost" onClick={closeModal}>
+                <Button variant="ghost" onClick={closeUserAddressModal}>
                   Cancel
                 </Button>
                 <Button
@@ -101,12 +104,36 @@ export function useUserAddressModal() {
     );
   };
 
+  const UserAddressSelector: React.FC<{ className?: string }> = ({
+    className = "",
+  }) => {
+    return (
+      <div className={`space-y-2 ${className}`}>
+        <button
+          onClick={openUserAddressModal}
+          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
+          <div className="flex items-center space-x-3">
+            <span className="h-3 w-3 rounded-full bg-blue-500 inline-block" />
+            <span className="text-sm font-medium text-slate-700">
+              {userAddress
+                ? userAddress.slice(0, 8) + "..." + userAddress.slice(-4)
+                : "No address"}
+            </span>
+          </div>
+        </button>
+      </div>
+    );
+  };
+
   return {
     userAddress,
-    openModal,
-    closeModal,
-    Modal,
+    setUserAddress,
+    openUserAddressModal,
+    closeUserAddressModal,
+    UserAddressModal,
+    UserAddressSelector,
   } as const;
 }
 
-export default useUserAddressModal;
+export default useUserAddress;

@@ -1,9 +1,12 @@
 import React from "react";
 import { useAccount } from "wagmi";
+import { SupportedChainIds } from "@/sdk/chains";
 
 type GlobalState = {
   userAddress?: string;
   setUserAddress: (addr?: string) => void;
+  chainId: number;
+  setChainId: (id: number) => void;
 };
 
 const GlobalStateContext = React.createContext<GlobalState | undefined>(
@@ -16,6 +19,25 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userAddress, setUserAddress] = React.useState<string | undefined>(
     undefined
   );
+  const [chainId, setChainId] = React.useState<number>(() => {
+    try {
+      const raw = localStorage.getItem("chainId");
+      // validate it's a number and a supported chain
+      if (raw) {
+        const parsed = parseInt(raw, 10);
+        if (
+          Object.values(SupportedChainIds).includes(
+            parsed as (typeof SupportedChainIds)[keyof typeof SupportedChainIds]
+          )
+        ) {
+          return parsed;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return SupportedChainIds.Base;
+  });
 
   // Restore from localStorage on mount
   React.useEffect(() => {
@@ -50,8 +72,19 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [userAddress]);
 
+  // Persist chainId to localStorage
+  React.useEffect(() => {
+    try {
+      localStorage.setItem("chainId", String(chainId));
+    } catch {
+      // ignore
+    }
+  }, [chainId]);
+
   return (
-    <GlobalStateContext.Provider value={{ userAddress, setUserAddress }}>
+    <GlobalStateContext.Provider
+      value={{ userAddress, setUserAddress, chainId, setChainId }}
+    >
       {children}
     </GlobalStateContext.Provider>
   );

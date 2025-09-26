@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAccount } from "wagmi";
 import { cn } from "../../lib/utils";
 import { truncateHex } from "../../lib/truncators";
 import type { MerklRewardsResponse } from "@/types";
 import { fetchMerklRewards } from "../../fetchers/fetchMerklRewards";
-import { UserInputSection } from "../../components/shared/UserInputSection";
+import { SelectorsSection } from "../../components/shared/SelectorsSection";
 import { Card, CardContent } from "../../components/ui/card";
-import { getChainName, SupportedChainIds } from "../../sdk/chains";
+import { getChainName } from "../../sdk/chains";
+import { useGlobalState } from "@/context/GlobalStateContext";
 import { ChevronDownIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { BigNumber } from "bignumber.js";
 
@@ -199,27 +199,13 @@ const TokenRewardCard: React.FC<TokenRewardCardProps> = ({ reward }) => {
 };
 
 export const MerklRewards: React.FC = () => {
-  const { address: connectedAddress } = useAccount();
-  const [address, setAddress] = useState<string | undefined>(connectedAddress);
-  const [chainId, setChainId] = useState<number>(SupportedChainIds.Base);
-
-  useEffect(() => {
-    if (!address) setAddress(connectedAddress);
-  }, [connectedAddress, address]);
+  const { chainId, userAddress } = useGlobalState();
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["merklRewards", chainId, address],
-    queryFn: () => fetchMerklRewards(chainId, address ?? ""),
-    enabled: !!address,
+    queryKey: ["merklRewards", chainId, userAddress],
+    queryFn: () => fetchMerklRewards(chainId, userAddress ?? ""),
+    enabled: !!userAddress && !!chainId,
   });
-
-  const handleAddressChange = (newAddress: string) => {
-    setAddress(newAddress);
-  };
-
-  const handleChainChange = (newChainId: number) => {
-    setChainId(newChainId);
-  };
 
   const renderRewardsCards = (data: MerklRewardsResponse) => {
     const allRewards = Object.entries(data.perChain).flatMap(
@@ -249,15 +235,7 @@ export const MerklRewards: React.FC = () => {
     <div className={cn("p-4")}>
       <h2 className="text-2xl font-semibold mb-4">Merkl Rewards</h2>
 
-      <UserInputSection
-        address={address}
-        chainId={chainId}
-        onAddressChange={handleAddressChange}
-        onChainChange={handleChainChange}
-        onSubmit={refetch}
-        addressPlaceholder="Wallet address"
-        className="mb-6"
-      />
+      <SelectorsSection onSubmit={refetch} className="mb-6" />
 
       {isLoading && (
         <Card>

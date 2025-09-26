@@ -4,31 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import fetchRewards from "@/fetchers/fetchRewards";
 import type { AggregatedRewards } from "@/types";
-import { SupportedChainIds } from "@/sdk/chains";
-import { UserInputSection } from "@/components/shared/UserInputSection";
+import { useGlobalState } from "@/context/GlobalStateContext";
+import { SelectorsSection } from "@/components/shared/SelectorsSection";
 import { formatRewardValue } from "./formatRewardValue";
 
 export const Rewards: React.FC = () => {
-  const { address: connectedAddress, isConnected } = useAccount();
-  const [inputAddress, setInputAddress] = React.useState<string>("");
-  const [chainId, setChainId] = React.useState<number>(
-    SupportedChainIds.Base
-  );
-
-  // Default to connected wallet on mount or when wallet changes
-  React.useEffect(() => {
-    if (isConnected && connectedAddress && !inputAddress) {
-      setInputAddress(connectedAddress);
-    }
-  }, [isConnected, connectedAddress, inputAddress]);
+  const { isConnected } = useAccount();
+  const { chainId, userAddress } = useGlobalState();
 
   const { data, isLoading, refetch, error } = useQuery<
     AggregatedRewards,
     Error
   >({
-    queryKey: ["rewards", inputAddress, chainId],
-    queryFn: () => fetchRewards(inputAddress ?? "", chainId),
-    enabled: !!inputAddress && !!chainId,
+    queryKey: ["rewards", userAddress, chainId],
+    queryFn: () => fetchRewards(userAddress ?? "", chainId),
+    enabled: !!userAddress && !!chainId,
   });
 
   // Compute sum of constituent parts as bigint (if present)
@@ -52,14 +42,7 @@ export const Rewards: React.FC = () => {
       <h2 className="text-2xl font-semibold mb-4">Rewards</h2>
 
       <div className="mb-4">
-        <UserInputSection
-          address={inputAddress}
-          chainId={chainId}
-          onAddressChange={setInputAddress}
-          onChainChange={setChainId}
-          onSubmit={() => refetch()}
-          showFetchButton={true}
-        />
+        <SelectorsSection onSubmit={() => refetch()} showFetchButton={true} />
       </div>
 
       {error && (

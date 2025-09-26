@@ -1,50 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAccount } from "wagmi";
 import { cn } from "../../lib/utils";
 import { formatNumberWithUnit } from "../../lib/formatters";
 import { truncateHex } from "../../lib/truncators";
 import type { IArmadaPosition } from "@summer_fi/sdk-client";
 import { fetchPositions } from "../../fetchers/fetchPositions";
-import { UserInputSection } from "../../components/shared/UserInputSection";
+import { SelectorsSection } from "../../components/shared/SelectorsSection";
+import { useGlobalState } from "@/context/GlobalStateContext";
 
 export type ArmadaPosition = IArmadaPosition;
 
 export const Positions: React.FC = () => {
-  const { address: connectedAddress } = useAccount();
-  const [address, setAddress] = useState<string | undefined>(connectedAddress);
-  const [chainId, setChainId] = useState<number>(1);
-
-  useEffect(() => {
-    if (!address) setAddress(connectedAddress);
-  }, [connectedAddress, address]);
+  const { userAddress, chainId } = useGlobalState();
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["positions", chainId, address],
-    queryFn: () => fetchPositions(chainId, address ?? ""),
-    enabled: !!address,
+    queryKey: ["positions", chainId, userAddress],
+    queryFn: () => fetchPositions(chainId, userAddress ?? ""),
+    enabled: !!userAddress && !!chainId,
   });
-
-  const handleAddressChange = (newAddress: string) => {
-    setAddress(newAddress);
-  };
-
-  const handleChainChange = (newChainId: number) => {
-    setChainId(newChainId);
-  };
 
   return (
     <div className={cn("p-4")}>
       <h2 className="text-2xl font-semibold mb-4">Positions</h2>
 
-      <UserInputSection
-        address={address}
-        chainId={chainId}
-        onAddressChange={handleAddressChange}
-        onChainChange={handleChainChange}
-        onSubmit={refetch}
-        addressPlaceholder="Wallet address"
-      />
+      <SelectorsSection onSubmit={refetch} />
 
       {isLoading && <div>Loading...</div>}
       {error && <div className="text-red-500">{(error as Error).message}</div>}
