@@ -14,8 +14,8 @@ export const Rewards: React.FC = () => {
     AggregatedRewards,
     Error
   >({
-    queryKey: ["rewards", userAddress, chainId],
-    queryFn: () => fetchRewards(userAddress ?? "", chainId),
+    queryKey: ["rewards", chainId, userAddress],
+    queryFn: () => fetchRewards(chainId, userAddress ?? ""),
     enabled: !!userAddress && !!chainId,
   });
 

@@ -1,8 +1,8 @@
 import type { AggregatedRewards } from "@/types";
 
 export default async function fetchRewards(
-  address: string,
-  chainId: number
+  chainId: number,
+  address: string
 ): Promise<AggregatedRewards> {
   if (!address) throw new Error("Address is required");
   if (!chainId) throw new Error("chainId is required");
