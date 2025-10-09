@@ -5,7 +5,7 @@ import fetchRewards from "@/fetchers/fetchRewards";
 import type { AggregatedRewards } from "@/types";
 import { useGlobalState } from "@/context/GlobalStateContext";
 import { SelectorsSection } from "@/components/shared/SelectorsSection";
-import { formatRewardValue } from "./formatRewardValue";
+import { formatSumrValue } from "../../lib/formatSumrValue";
 
 export const Rewards: React.FC = () => {
   const { chainId, userAddress } = useGlobalState();
@@ -59,7 +59,7 @@ export const Rewards: React.FC = () => {
           <CardContent>
             {isLoading
               ? "Loading..."
-              : formatRewardValue(data ? data.total : undefined)}
+              : formatSumrValue(data ? data.total : undefined)}
           </CardContent>
         </Card>
 
@@ -70,7 +70,7 @@ export const Rewards: React.FC = () => {
           <CardContent>
             {isLoading
               ? "Loading..."
-              : formatRewardValue(data ? data.vaultUsage : undefined)}
+              : formatSumrValue(data ? data.vaultUsage : undefined)}
           </CardContent>
         </Card>
 
@@ -81,7 +81,7 @@ export const Rewards: React.FC = () => {
           <CardContent>
             {isLoading
               ? "Loading..."
-              : formatRewardValue(data ? data.merkleDistribution : undefined)}
+              : formatSumrValue(data ? data.merkleDistribution : undefined)}
           </CardContent>
         </Card>
 
@@ -92,7 +92,7 @@ export const Rewards: React.FC = () => {
           <CardContent>
             {isLoading
               ? "Loading..."
-              : formatRewardValue(data ? data.voteDelegation : undefined)}
+              : formatSumrValue(data ? data.voteDelegation : undefined)}
           </CardContent>
         </Card>
 
@@ -106,11 +106,11 @@ export const Rewards: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <div>Total (Vault + Merkl + Vote)</div>
-                  <div>{formatRewardValue(sumOfConstituents?.toString())}</div>
+                  <div>{formatSumrValue(sumOfConstituents?.toString())}</div>
                 </div>
                 <div className="flex justify-between">
                   <div>Reported Total</div>
-                  <div>{formatRewardValue(data ? data.total : undefined)}</div>
+                  <div>{formatSumrValue(data ? data.total : undefined)}</div>
                 </div>
                 <div className="flex justify-between items-center">
                   <div>Difference</div>
@@ -119,7 +119,7 @@ export const Rewards: React.FC = () => {
                       ? "-"
                       : difference === BigInt(0)
                       ? "Match ✅"
-                      : `${formatRewardValue(difference.toString())} ${
+                      : `${formatSumrValue(difference.toString())} ${
                           difference > BigInt(0)
                             ? "(total > sum)"
                             : "(sum > total)"
@@ -143,7 +143,7 @@ export const Rewards: React.FC = () => {
                   ([chain, value]) => (
                     <div key={chain} className="flex justify-between">
                       <div>Chain {chain}</div>
-                      <div>{formatRewardValue(value)}</div>
+                      <div>{formatSumrValue(value)}</div>
                     </div>
                   )
                 )}

@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "../ui/button";
-import { formatApy, formatAnyNumericValue } from "../../lib/formatters";
+import { formatApy, formatTokenAmount } from "../../lib/formatters";
 import type { AddressValue, ChainId } from "@summer_fi/sdk-client";
 import type { VaultInfo } from "@/types";
 import { truncateHex } from "../../lib/truncators";
+import { formatSumrValue } from "../../lib/formatSumrValue";
 
 interface VaultSelectorProps {
   chainId: ChainId;
@@ -42,27 +43,45 @@ function VaultTile({ vault, onSelect }: VaultTileProps) {
             <span className="font-semibold text-foreground block">
               Deposit Cap:
             </span>
-            <p className="font-medium">
-              {formatAnyNumericValue(vault.depositCap)} {vault.assetToken}
-            </p>
+            <p className="font-medium">{formatTokenAmount(vault.depositCap)}</p>
           </div>
           <div className="space-y-1">
             <span className="font-semibold text-foreground block">TVL:</span>
-            <p className="font-medium">
-              {formatAnyNumericValue(vault.tvl)} {vault.assetToken}
-            </p>
+            <p className="font-medium">{formatTokenAmount(vault.tvl)}</p>
           </div>
         </div>
 
         {/* APY takes full width */}
         <div className="text-sm space-y-1">
           <span className="font-semibold text-foreground block text-center">
-            APY:
+            Base APY:
           </span>
           <p className="font-medium text-green-600 text-center text-lg">
             {formatApy(vault.apy)}
           </p>
         </div>
+
+        {/* Merkl Rewards */}
+        {vault.merklRewards && vault.merklRewards.length > 0 && (
+          <div className="text-sm space-y-2 pt-2 border-t">
+            <span className="font-semibold text-foreground block text-center">
+              Merkl Rewards (Daily):
+            </span>
+            <div className="space-y-1">
+              {vault.merklRewards.map((reward, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center px-2"
+                >
+                  <span className="text-muted-foreground">{reward.symbol}</span>
+                  <span className="font-medium text-blue-600">
+                    {formatSumrValue(reward.dailyEmission)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

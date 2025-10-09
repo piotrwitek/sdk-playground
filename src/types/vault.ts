@@ -6,6 +6,8 @@ export interface VaultInfo {
   token: string;
   assetToken: string;
   apy: string;
+  rewardsApys: { symbol: string; apy?: string }[];
+  merklRewards?: { symbol: string; dailyEmission: string }[];
   tvl: string;
   depositCap: string;
 }

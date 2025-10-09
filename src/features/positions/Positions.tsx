@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "../../lib/utils";
-import { formatNumberWithUnit } from "../../lib/formatters";
+import { formatTokenAmount } from "../../lib/formatters";
 import { truncateHex } from "../../lib/truncators";
 import type { IArmadaPosition } from "@summer_fi/sdk-client";
 import { fetchPositions } from "../../fetchers/fetchPositions";
@@ -59,25 +59,25 @@ export const Positions: React.FC = () => {
                 </td>
                 <td className="border px-2 py-1 align-top">{p.shares}</td>
                 <td className="border px-2 py-1 text-right align-top">
-                  {formatNumberWithUnit(p.amount)}
+                  {formatTokenAmount(p.amount)}
                 </td>
                 <td className="border px-2 py-1 text-right align-top">
-                  {formatNumberWithUnit(p.depositsAmount)}
+                  {formatTokenAmount(p.depositsAmount)}
                 </td>
                 <td className="border px-2 py-1 text-right align-top">
-                  {p.deposits.map(formatNumberWithUnit).join(", ")}
+                  {p.deposits.map(formatTokenAmount).join(", ")}
                 </td>
                 <td className="border px-2 py-1 text-right align-top">
-                  {formatNumberWithUnit(p.withdrawalsAmount)}
+                  {formatTokenAmount(p.withdrawalsAmount)}
                 </td>
                 <td className="border px-2 py-1 text-right align-top">
-                  {p.withdrawals.map(formatNumberWithUnit).join(", ")}
+                  {p.withdrawals.map(formatTokenAmount).join(", ")}
                 </td>
                 <td className="border px-2 py-1 text-right align-top">
-                  {formatNumberWithUnit(p.claimableSummerToken)}
+                  {formatTokenAmount(p.claimableSummerToken)}
                 </td>
                 <td className="border px-2 py-1 text-right align-top">
-                  {formatNumberWithUnit(p.claimedSummerToken)}
+                  {formatTokenAmount(p.claimedSummerToken)}
                 </td>
               </tr>
             ))}

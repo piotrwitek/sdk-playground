@@ -20,7 +20,10 @@ export function formatApy(apy: string | number): string {
  * @param decimals - decimal places (default: 2)
  * @returns formatted string (e.g., "1.40K", "7.06M", "2.15B")
  */
-export function formatAnyNumericValue(value: bigint | string | number | undefined, decimals: number = 2): string {
+export function formatAnyNumericValue(
+  value: bigint | string | number | undefined,
+  decimals: number = 2
+): string {
   if (value === undefined || value === null) return "-";
 
   try {
@@ -47,17 +50,17 @@ export function formatAnyNumericValue(value: bigint | string | number | undefine
 
 /**
  * Format a number with unit (e.g., "58.982631 USDT") to human readable format
- * @param valueWithUnit - String in format "number unit" (e.g., "58.982631 USDT")
+ * @param tokenAmount - String in format "number unit" (e.g., "58.982631 USDT")
  * @returns Formatted string with human readable number and original unit (e.g., "58.98 USDT")
  */
-export function formatNumberWithUnit(valueWithUnit: string): string {
-  if (!valueWithUnit || typeof valueWithUnit !== "string") {
-    return valueWithUnit;
+export function formatTokenAmount(tokenAmount: string): string {
+  if (!tokenAmount || typeof tokenAmount !== "string") {
+    return tokenAmount;
   }
 
-  const parts = valueWithUnit.split(" ");
+  const parts = tokenAmount.split(" ");
   if (parts.length !== 2) {
-    return valueWithUnit; // Return original if format doesn't match expected pattern
+    return tokenAmount; // Return original if format doesn't match expected pattern
   }
 
   const [numberPart, unit] = parts;

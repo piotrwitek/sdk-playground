@@ -12,15 +12,25 @@ const fetchVaults = async ({ chainId }: VaultsParams): Promise<VaultInfo[]> => {
     return [];
   }
 
-  return vaults.list.map((vault) => ({
-    id: vault.id.fleetAddress.value,
-    name: vault.token.name.toString(),
-    token: vault.token.symbol.toString(),
-    assetToken: vault.assetToken.symbol.toString(),
-    apy: vault.apy?.toString() || "N/A",
-    tvl: vault.totalDeposits.toString(),
-    depositCap: vault.depositCap.toString(),
-  }));
+  return vaults.list.map((vault) => {
+    return {
+      id: vault.id.fleetAddress.value,
+      name: vault.token.name.toString(),
+      token: vault.token.symbol.toString(),
+      assetToken: vault.assetToken.symbol.toString(),
+      apy: vault.apy?.toString() || "N/A",
+      rewardsApys: vault.rewardsApys.map((r) => ({
+        symbol: r.token.symbol.toString(),
+        apy: r.apy?.toString(),
+      })),
+      merklRewards: vault.merklRewards?.map((r) => ({
+        symbol: r.token.symbol.toString(),
+        dailyEmission: r.dailyEmission.toString(),
+      })),
+      tvl: vault.totalDeposits.toString(),
+      depositCap: vault.depositCap.toString(),
+    };
+  });
 };
 
 export default async function handler(
