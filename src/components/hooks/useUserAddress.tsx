@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useGlobalState } from "@/context/GlobalStateContext";
-import { useModal } from "@/hooks/shared/useModal";
+import { useModal } from "@/components/hooks/useModal";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import React from "react";

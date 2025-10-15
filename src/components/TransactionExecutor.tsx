@@ -20,7 +20,7 @@ import {
   ReloadIcon,
 } from "@radix-ui/react-icons";
 import { Transaction } from "@/types";
-import { truncateHexInText } from "../../lib/truncators";
+import { truncateHexInText } from "../lib/truncators";
 import type { ChainId } from "@summer_fi/sdk-client";
 
 interface TransactionExecutorProps<TransactionParams extends object> {

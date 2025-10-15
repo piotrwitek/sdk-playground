@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { cn } from "../../lib/utils";
 import type { MerklRewardsResponse } from "@/types";
 import { fetchMerklRewards } from "../../fetchers/fetchMerklRewards";
-import { SelectorsSection } from "../../components/shared/SelectorsSection";
+import { SelectorsSection } from "../../components/SelectorsSection";
 import { Card, CardContent } from "../../components/ui/card";
 import { useGlobalState } from "@/context/GlobalStateContext";
 import { TokenRewardCard } from "./TokenRewardCard";

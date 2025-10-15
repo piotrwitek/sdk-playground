@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { ChainSelector } from "./ChainSelector";
-import { useUserAddress } from "@/hooks/useUserAddress";
-import { cn } from "../../lib/utils";
+import { useUserAddress } from "@/components/hooks/useUserAddress";
+import { cn } from "../lib/utils";
 import { useGlobalState } from "@/context/GlobalStateContext";
 
 interface UserInputSectionProps {

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import fetchRewards from "@/fetchers/fetchRewards";
 import type { AggregatedRewards } from "@/types";
 import { useGlobalState } from "@/context/GlobalStateContext";
-import { SelectorsSection } from "@/components/shared/SelectorsSection";
+import { SelectorsSection } from "@/components/SelectorsSection";
 import { formatSumrValue } from "../../lib/formatSumrValue";
 
 export const Rewards: React.FC = () => {

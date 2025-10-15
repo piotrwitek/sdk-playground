@@ -1,7 +1,7 @@
 import { DepositFeature } from "./components/DepositFeature";
 import { WithdrawFeature } from "./components/WithdrawFeature";
-import { ChainSelector } from "../../components/shared/ChainSelector";
-import { VaultSelector } from "../../components/shared/VaultSelector";
+import { ChainSelector } from "../../components/ChainSelector";
+import { VaultSelector } from "../../components/VaultSelector";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { type ChainId, type AddressValue } from "@summer_fi/sdk-client";

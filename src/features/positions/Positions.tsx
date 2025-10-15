@@ -5,7 +5,7 @@ import { formatTokenAmount } from "../../lib/formatters";
 import { truncateHex } from "../../lib/truncators";
 import type { IArmadaPosition } from "@summer_fi/sdk-client";
 import { fetchPositions } from "../../fetchers/fetchPositions";
-import { SelectorsSection } from "../../components/shared/SelectorsSection";
+import { SelectorsSection } from "../../components/SelectorsSection";
 import { useGlobalState } from "@/context/GlobalStateContext";
 
 export type ArmadaPosition = IArmadaPosition;

@@ -1,4 +1,4 @@
-import { TransactionExecutor } from "../../../components/shared/TransactionExecutor";
+import { TransactionExecutor } from "../../../components/TransactionExecutor";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
 import type { WithdrawParams } from "@/types";
 import { type AddressValue, type ChainId } from "@summer_fi/sdk-client";

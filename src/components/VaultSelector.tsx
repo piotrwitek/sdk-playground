@@ -1,10 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
-import { Button } from "../ui/button";
-import { formatApy, formatTokenAmount } from "../../lib/formatters";
+import { useState } from "react";
+import { Button } from "./ui/button";
 import type { AddressValue, ChainId } from "@summer_fi/sdk-client";
 import type { VaultInfo } from "@/types";
-import { truncateHex } from "../../lib/truncators";
-import { formatSumrValue } from "../../lib/formatSumrValue";
+import { VaultTile } from "./VaultTile";
+import { useVaults } from "./hooks/useVaults";
 
 interface VaultSelectorProps {
   chainId: ChainId;
@@ -15,117 +14,9 @@ interface VaultSelectorProps {
   hideLabel?: boolean;
 }
 
-interface VaultTileProps {
+export interface VaultTileProps {
   vault: VaultInfo;
   onSelect: (vaultId: AddressValue) => void;
-}
-
-function VaultTile({ vault, onSelect }: VaultTileProps) {
-  return (
-    <div
-      className="p-4 cursor-pointer hover:bg-accent hover:shadow-md transition-all duration-200 border rounded-lg hover:border-primary/50 bg-card"
-      onClick={() => onSelect(vault.id)}
-    >
-      <div className="space-y-3">
-        {/* Token name takes full width on top */}
-        <div className="w-full">
-          <h3 className="font-semibold text-lg text-center">
-            {vault.name.replace(/_/g, " | ")}
-          </h3>
-          <p className="text-sm text-muted-foreground text-center">
-            ID: {truncateHex(vault.id)}
-          </p>
-        </div>
-
-        {/* Deposit Cap and TVL side by side */}
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="space-y-1">
-            <span className="font-semibold text-foreground block">
-              Deposit Cap:
-            </span>
-            <p className="font-medium">{formatTokenAmount(vault.depositCap)}</p>
-          </div>
-          <div className="space-y-1">
-            <span className="font-semibold text-foreground block">TVL:</span>
-            <p className="font-medium">{formatTokenAmount(vault.tvl)}</p>
-          </div>
-        </div>
-
-        {/* APY takes full width */}
-        <div className="text-sm space-y-1">
-          <span className="font-semibold text-foreground block text-center">
-            Base APY:
-          </span>
-          <p className="font-medium text-green-600 text-center text-lg">
-            {formatApy(vault.apy)}
-          </p>
-        </div>
-
-        {/* Merkl Rewards */}
-        {vault.merklRewards && vault.merklRewards.length > 0 && (
-          <div className="text-sm space-y-2 pt-2 border-t">
-            <span className="font-semibold text-foreground block text-center">
-              Merkl Rewards (Daily):
-            </span>
-            <div className="space-y-1">
-              {vault.merklRewards.map((reward, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between items-center px-2"
-                >
-                  <span className="text-muted-foreground">{reward.symbol}</span>
-                  <span className="font-medium text-blue-600">
-                    {formatSumrValue(reward.dailyEmission)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// Add the hook to memoize fetchVaults and expose state
-function useVaults(chainId: ChainId) {
-  const [vaults, setVaults] = useState<VaultInfo[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchVaults = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/vaults", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ chainId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch vaults");
-      }
-
-      const data = await response.json();
-      setVaults(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch vaults");
-      setVaults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [chainId]);
-
-  useEffect(() => {
-    // run once on mount and whenever chainId changes (fetchVaults is stable)
-    void fetchVaults();
-  }, [fetchVaults]);
-
-  return { vaults, loading, error, fetchVaults, setVaults };
 }
 
 export function VaultSelector({

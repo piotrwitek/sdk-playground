@@ -5,9 +5,10 @@ export interface VaultInfo {
   name: string;
   token: string;
   assetToken: string;
+  assetTokenPriceUSD: string;
   apy: string;
   rewardsApys: { symbol: string; apy?: string }[];
-  merklRewards?: { symbol: string; dailyEmission: string }[];
+  merklRewards?: { symbol: string; dailyEmission: string; apy?: string }[];
   tvl: string;
   depositCap: string;
 }

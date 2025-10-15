@@ -4,8 +4,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { SupportedChainIds, getAvailableChains } from "../../sdk/chains";
+} from "./ui/select";
+import { SupportedChainIds, getAvailableChains } from "../sdk/chains";
 
 interface ChainSelectorProps {
   value?: number;
