@@ -75,7 +75,7 @@ const fetchVaults = async ({ chainId }: VaultsParams): Promise<VaultInfo[]> => {
       assetToken: assetTokenSymbol,
       assetTokenPriceUSD,
       apy: vault.apy?.toString() || "N/A",
-      rewardsApys: vault.rewardsApys.map((r) => ({
+      rewardsApys: vault.rewardsApys?.map((r) => ({
         symbol: r.token.symbol.toString(),
         apy: r.apy?.toString(),
       })),
