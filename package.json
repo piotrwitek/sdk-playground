@@ -18,7 +18,7 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@shadcn/ui": "^0.0.4",
-    "@summer_fi/sdk-client": "2.0.2",
+    "@summer_fi/sdk-client": "link:../../Library/pnpm/global/5/node_modules/@summer_fi/sdk-client",
     "@tanstack/react-query": "5.87.4",
     "bignumber.js": "^9.3.1",
     "class-variance-authority": "^0.7.1",
