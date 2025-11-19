@@ -16,9 +16,8 @@ export async function createEnsoTxData({
   sourceTokenSymbol,
   assetTokenSymbol,
   amount,
+  slippage, // in basis points, e.g., 50 = 0.5%
 }: CrossChainParams) {
-  const slippage = "50"; // 0.5%
-
   const sourceToken = await sdk.tokens.getTokenBySymbol({
     symbol: sourceTokenSymbol,
     chainId: sourceChainId,
@@ -123,6 +122,7 @@ export default async function handler(
       sourceTokenSymbol,
       assetTokenSymbol,
       amount,
+      slippage,
     } = req.body;
 
     const missingFields = [];
@@ -148,6 +148,7 @@ export default async function handler(
       sourceTokenSymbol,
       assetTokenSymbol,
       amount,
+      slippage: slippage ?? 50, // default to 0.5% if not provided
     });
 
     console.log("txData:", JSON.stringify(txData));

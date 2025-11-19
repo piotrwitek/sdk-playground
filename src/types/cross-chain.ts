@@ -8,4 +8,5 @@ export type CrossChainParams = {
   sourceTokenSymbol: string;
   assetTokenSymbol: string;
   amount: string;
+  slippage: number; // in basis points, e.g., 50 = 0.5%
 };
