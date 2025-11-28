@@ -18,7 +18,7 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@shadcn/ui": "^0.0.4",
-    "@summer_fi/sdk-client": "2.1.0",
+    "@summer_fi/sdk-client": "2.2.0",
     "@tanstack/react-query": "5.87.4",
     "bignumber.js": "^9.3.1",
     "class-variance-authority": "^0.7.1",
@@ -33,13 +33,13 @@
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.20.5",
     "typescript": "^5.8.3",
-    "viem": "latest",
-    "wagmi": "latest"
+    "viem": "2",
+    "wagmi": "2"
   },
   "devDependencies": {
     "@types/node": "^18.19.3",
     "@types/react": "^18.3.1",
-    "@wagmi/cli": "latest",
+    "@wagmi/cli": "2",
     "autoprefixer": "^10",
     "eslint": "^8.15.0",
     "eslint-config-next": "^14.0.4",
