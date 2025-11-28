@@ -15,14 +15,14 @@ export function formatApy(apy: string | number): string {
 }
 
 /**
- * Formats any numeric value with K/M/B suffixes. Defaults to 2 decimal places.
+ * Formats any numeric value with K/M/B suffixes. Defaults to 4 decimal places.
  * @param value - bigint, number, string, or undefined
- * @param decimals - decimal places (default: 2)
- * @returns formatted string (e.g., "1.40K", "7.06M", "2.15B")
+ * @param decimals - decimal places (default: 4)
+ * @returns formatted string (e.g., "1.4000K", "7.0600M", "2.1500B")
  */
 export function formatAnyNumericValue(
   value: bigint | string | number | undefined,
-  decimals: number = 2
+  decimals: number = 4
 ): string {
   if (value === undefined || value === null) return "-";
 
@@ -86,4 +86,35 @@ export function formatCurrency(
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
+}
+
+/**
+ * Format a fiat amount string like "123.45 USD" to localized currency format
+ * @param value - String in format "number currency" (e.g., "123.45 USD")
+ * @returns Formatted currency string (e.g., "$123.45" for USD)
+ */
+export function formatFiatAmount(value: string): string {
+  if (!value) return "-";
+  const [amountPart, currencyPart] = value.split(" ");
+  const amount = Number(amountPart);
+  if (Number.isNaN(amount)) {
+    return value;
+  }
+  if (!currencyPart || currencyPart === "USD") {
+    return formatCurrency(amount, "$");
+  }
+  return `${currencyPart} ${amount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+/**
+ * Format a Unix timestamp to a localized date/time string
+ * @param timestamp - Unix timestamp in seconds
+ * @returns Formatted date/time string
+ */
+export function formatTimestamp(timestamp: number): string {
+  if (!timestamp) return "-";
+  return new Date(timestamp * 1000).toLocaleString();
 }

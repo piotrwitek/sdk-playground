@@ -22,6 +22,7 @@ Components organized by domain in `src/features/`:
 
 - `src/features/vaults/` - Main vault operations (deposit/withdraw)
 - `src/features/cross-chain-deposit/` - Cross-chain bridging workflows
+- `src/features/position-activity/` - Historical deposit/withdraw activity viewer per vault/user position
 
 ### SDK Client Pattern
 
@@ -146,12 +147,13 @@ import {
 import type { DepositParams } from "@/types/deposit";
 ```
 
-### Utility Functions (`src/lib/utils.ts`)
+### Utility Functions (`src/lib/utils.ts` and `src/lib/formatters.ts`)
 
 Essential helpers for the application:
 
 - `cn()` - Tailwind class merging with conflict resolution
 - `formatCurrency()`, `formatApy()`, `formatNumberHumanReadable()` - Financial formatting
+- `formatTokenAmount()` - Accepts a format from TokenAmount.toString() like `"123.45 USDT"` and formats the numeric portion using human-readable suffixes while preserving the unit (used when showing vault positions/activity amounts)
 - `truncateHex()`, `truncateHexInText()` - Address/hash truncation with auto-detection
 - `getChainName()` - Chain ID to human-readable name mapping for supported chains
 
@@ -161,6 +163,7 @@ const buttonClass = cn("px-4 py-2", isActive && "bg-blue-500", "rounded");
 const displayApy = formatApy(vault.apy); // "12.45%" or "N/A"
 const shortHash = truncateHex(transaction.hash); // "0x1234...abcd"
 const chainName = getChainName(chainId); // "Base", "Arbitrum One", etc.
+const formattedDeposit = formatTokenAmount(tokenAmount.toString()); // tokenAmount is an instance of TokenAmount
 ```
 
 ### Conditional Rendering Pattern

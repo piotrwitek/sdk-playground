@@ -11,6 +11,7 @@ const navigationItems: NavigationItem[] = [
   { href: "/", label: "Vaults" },
   { href: "/cross-chain", label: "Cross-chain" },
   { href: "/positions", label: "Positions" },
+  { href: "/position-activity", label: "Position Activity" },
   { href: "/merkl", label: "Merkl Rewards" },
   { href: "/rewards", label: "Rewards" },
 ];

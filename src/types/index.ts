@@ -6,3 +6,4 @@ export * from "./chain";
 export * from "./merkl";
 export * from "./vault";
 export * from "./rewards";
+export * from "./activity";
