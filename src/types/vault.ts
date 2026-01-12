@@ -1,4 +1,5 @@
 import type { AddressValue, ChainId } from "@summer_fi/sdk-client";
+import type { EnvironmentType } from "./environment";
 
 export interface VaultInfo {
   id: AddressValue;
@@ -15,4 +16,5 @@ export interface VaultInfo {
 
 export type VaultsParams = {
   chainId: ChainId;
+  environment: EnvironmentType;
 };

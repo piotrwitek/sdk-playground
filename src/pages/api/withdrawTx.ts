@@ -7,7 +7,8 @@ import {
   TokenAmount,
   User,
 } from "@summer_fi/sdk-client";
-import { sdk } from "../../clients/sdk-client";
+import { createSDK } from "../../clients/sdk-client";
+import { isValidEnvironment } from "@/types";
 import {
   mapSdkTransactionToTransaction,
   Transaction,
@@ -19,7 +20,9 @@ const createTransactions = async ({
   senderAddress,
   fleetAddress,
   assetTokenSymbol,
+  environment,
 }: WithdrawParams): Promise<Transaction[]> => {
+  const sdk = createSDK(environment);
   // create a user using EOA address
   const user = User.createFromEthereum(chainId, senderAddress);
 
@@ -71,7 +74,7 @@ export default async function handler(
   }
 
   try {
-    const { chainId, senderAddress, fleetAddress, assetTokenSymbol } = req.body;
+    const { chainId, senderAddress, fleetAddress, assetTokenSymbol, environment } = req.body;
 
     if (!chainId) {
       return res.status(400).json({ error: "chainId is required" });
@@ -85,12 +88,21 @@ export default async function handler(
     if (!assetTokenSymbol) {
       return res.status(400).json({ error: "assetTokenSymbol is required" });
     }
+    if (!environment) {
+      return res.status(400).json({ error: "environment is required" });
+    }
+    if (!isValidEnvironment(environment)) {
+      return res.status(400).json({ 
+        error: "Invalid environment. Must be one of: local, staging, prod" 
+      });
+    }
 
     const transactions = await createTransactions({
       chainId,
       senderAddress,
       fleetAddress,
       assetTokenSymbol,
+      environment,
     });
     res.status(200).json(transactions);
   } catch (error) {

@@ -4,6 +4,7 @@ import type { WithdrawParams } from "@/types";
 import { type AddressValue, type ChainId } from "@summer_fi/sdk-client";
 import { useAccount } from "wagmi";
 import { fetchWithdrawTx } from "../../../fetchers/fetchWithdrawTx";
+import { useGlobalState } from "@/context/GlobalStateContext";
 
 interface WithdrawFeatureProps {
   chainId: ChainId;
@@ -17,6 +18,7 @@ export function WithdrawFeature({
   assetTokenSymbol,
 }: WithdrawFeatureProps) {
   const { address, isConnected } = useAccount();
+  const { environment } = useGlobalState();
 
   if (!isConnected || !address || !vaultId || !assetTokenSymbol) {
     return null;
@@ -34,6 +36,7 @@ export function WithdrawFeature({
         assetTokenSymbol,
       }}
       transactionChainId={chainId}
+      environment={environment}
     />
   );
 }

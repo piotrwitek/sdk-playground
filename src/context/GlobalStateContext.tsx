@@ -1,12 +1,15 @@
 import React from "react";
 import { useAccount } from "wagmi";
-import { SupportedChainIds } from "@/sdk/chains";
+import { ChainIds } from "@/types";
+import { Environment, type EnvironmentType } from "@/types";
 
 type GlobalState = {
   userAddress?: string;
-  setUserAddress: (addr?: string) => void;
+  setUserAddress: (addr: string) => void;
   chainId: number;
   setChainId: (id: number) => void;
+  environment: EnvironmentType;
+  setEnvironment: (env: EnvironmentType) => void;
 };
 
 const GlobalStateContext = React.createContext<GlobalState | undefined>(
@@ -26,8 +29,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
       if (raw) {
         const parsed = parseInt(raw, 10);
         if (
-          Object.values(SupportedChainIds).includes(
-            parsed as (typeof SupportedChainIds)[keyof typeof SupportedChainIds]
+          Object.values(ChainIds).includes(
+            parsed as (typeof ChainIds)[keyof typeof ChainIds]
           )
         ) {
           return parsed;
@@ -36,7 +39,18 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch {
       // ignore
     }
-    return SupportedChainIds.Base;
+    return ChainIds.Base;
+  });
+  const [environment, setEnvironment] = React.useState<EnvironmentType>(() => {
+    try {
+      const raw = localStorage.getItem("environment");
+      if (raw && Object.values(Environment).includes(raw as EnvironmentType)) {
+        return raw as EnvironmentType;
+      }
+    } catch {
+      // ignore
+    }
+    return Environment.Prod;
   });
 
   // Restore from localStorage on mount
@@ -81,9 +95,25 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [chainId]);
 
+  // Persist environment to localStorage
+  React.useEffect(() => {
+    try {
+      localStorage.setItem("environment", environment);
+    } catch {
+      // ignore
+    }
+  }, [environment]);
+
   return (
     <GlobalStateContext.Provider
-      value={{ userAddress, setUserAddress, chainId, setChainId }}
+      value={{
+        userAddress,
+        setUserAddress,
+        chainId,
+        setChainId,
+        environment,
+        setEnvironment,
+      }}
     >
       {children}
     </GlobalStateContext.Provider>

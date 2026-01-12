@@ -3,9 +3,10 @@ import {
   NATIVE_CURRENCY_ADDRESS_LOWERCASE,
   TokenAmount,
 } from "@summer_fi/sdk-client";
-import { sdk } from "../../clients/sdk-client";
+import { createSDK } from "../../clients/sdk-client";
 import { ensoClient } from "../../clients/enso-client";
-import type { CrossChainParams } from "@/types";
+import type { CrossChainParams, EnvironmentType } from "@/types";
+import { isValidEnvironment } from "@/types";
 import type { BundleAction } from "@ensofinance/sdk";
 
 export async function createEnsoTxData({
@@ -17,7 +18,9 @@ export async function createEnsoTxData({
   assetTokenSymbol,
   amount,
   slippage, // in basis points, e.g., 50 = 0.5%
-}: CrossChainParams) {
+  environment,
+}: CrossChainParams & { environment: EnvironmentType }) {
+  const sdk = createSDK(environment);
   const sourceToken = await sdk.tokens.getTokenBySymbol({
     symbol: sourceTokenSymbol,
     chainId: sourceChainId,
@@ -123,6 +126,7 @@ export default async function handler(
       assetTokenSymbol,
       amount,
       slippage,
+      environment,
     } = req.body;
 
     const missingFields = [];
@@ -133,11 +137,18 @@ export default async function handler(
     if (!sourceTokenSymbol) missingFields.push("sourceTokenSymbol");
     if (!assetTokenSymbol) missingFields.push("assetTokenSymbol");
     if (!amount) missingFields.push("amount");
+    if (!environment) missingFields.push("environment");
 
     if (missingFields.length > 0) {
       return res
         .status(400)
         .json({ error: "All fields are required", missingFields });
+    }
+
+    if (!isValidEnvironment(environment)) {
+      return res.status(400).json({
+        error: "Invalid environment. Must be one of: local, staging, prod",
+      });
     }
 
     const txData = await createEnsoTxData({
@@ -149,6 +160,7 @@ export default async function handler(
       assetTokenSymbol,
       amount,
       slippage: slippage ?? 50, // default to 0.5% if not provided
+      environment,
     });
 
     console.log("txData:", JSON.stringify(txData));
@@ -165,6 +177,6 @@ export default async function handler(
     });
   } catch (error) {
     console.error("Error creating Enso transaction:", error);
-    res.status(500).json({ error: "Failed to create transaction" });
+    res.status(500).json({ error: "Error creating Enso transaction" });
   }
 }

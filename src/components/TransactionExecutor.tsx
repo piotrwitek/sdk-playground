@@ -19,7 +19,7 @@ import {
   ExternalLinkIcon,
   ReloadIcon,
 } from "@radix-ui/react-icons";
-import { Transaction } from "@/types";
+import { Transaction, type EnvironmentType } from "@/types";
 import { truncateHexInText } from "../lib/truncators";
 import type { ChainId } from "@summer_fi/sdk-client";
 
@@ -29,7 +29,11 @@ interface TransactionExecutorProps<TransactionParams extends object> {
   icon?: React.ReactNode;
   transactionChainId: ChainId;
   transactionParams: TransactionParams;
-  onFetchTransactions: (params: TransactionParams) => Promise<Transaction[]>;
+  environment: EnvironmentType;
+  onFetchTransactions: (
+    params: TransactionParams,
+    environment: EnvironmentType
+  ) => Promise<Transaction[]>;
 }
 
 export function TransactionExecutor<TransactionParams extends object>({
@@ -39,6 +43,7 @@ export function TransactionExecutor<TransactionParams extends object>({
   onFetchTransactions,
   transactionParams,
   transactionChainId,
+  environment,
 }: TransactionExecutorProps<TransactionParams>) {
   const [isFetchingTx, setIsFetchingTx] = useState(false);
   const [transaction, setTransaction] = useState<Transaction | undefined>(
@@ -119,7 +124,10 @@ export function TransactionExecutor<TransactionParams extends object>({
       setIsFetchingTx(true);
 
       // Fetch transactions from the API
-      const transactions = await onFetchTransactions(transactionParams);
+      const transactions = await onFetchTransactions(
+        transactionParams,
+        environment
+      );
 
       // Execute the first transaction
       if (transactions.length > 0) {

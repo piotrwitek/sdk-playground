@@ -1,31 +1,22 @@
 import type { ChainId } from "@summer_fi/sdk-client";
 import { useState, useCallback, useEffect } from "react";
 import type { VaultInfo } from "../../types";
+import { fetchVaults } from "../../fetchers/fetchVaults";
+import { useGlobalState } from "@/context/GlobalStateContext";
 
 // Add the hook to memoize fetchVaults and expose state
 export function useVaults(chainId: ChainId) {
+  const { environment } = useGlobalState();
   const [vaults, setVaults] = useState<VaultInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchVaults = useCallback(async () => {
+  const fetchVaultsHandler = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/vaults", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ chainId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch vaults");
-      }
-
-      const data = await response.json();
+      const data = await fetchVaults(chainId, environment);
       setVaults(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch vaults");
@@ -33,12 +24,12 @@ export function useVaults(chainId: ChainId) {
     } finally {
       setLoading(false);
     }
-  }, [chainId]);
+  }, [chainId, environment]);
 
   useEffect(() => {
-    // run once on mount and whenever chainId changes (fetchVaults is stable)
-    void fetchVaults();
-  }, [fetchVaults]);
+    // run once on mount and whenever chainId or environment changes
+    void fetchVaultsHandler();
+  }, [fetchVaultsHandler]);
 
-  return { vaults, loading, error, fetchVaults, setVaults };
+  return { vaults, loading, error, fetchVaults: fetchVaultsHandler, setVaults };
 }

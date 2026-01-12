@@ -1,18 +1,19 @@
-import type { AggregatedRewards } from "@/types";
+import type { AggregatedRewards, EnvironmentType } from "@/types";
 
 export default async function fetchRewards(
   chainId: number,
-  address: string
+  address: string,
+  environment: EnvironmentType
 ): Promise<AggregatedRewards> {
   if (!address) throw new Error("Address is required");
   if (!chainId) throw new Error("chainId is required");
 
   const resp = await fetch(
-    `/api/rewards?address=${address}&chainId=${chainId}`
+    `/api/rewards?address=${address}&chainId=${chainId}&environment=${environment}`
   );
 
   if (!resp.ok) {
-    throw new Error(`Failed to fetch rewards: ${resp.statusText}`);
+    throw new Error(`Failed to fetch rewards: ${await resp.text()}`);
   }
 
   const json = await resp.json();

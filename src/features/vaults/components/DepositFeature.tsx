@@ -4,6 +4,7 @@ import type { DepositParams } from "@/types";
 import { type AddressValue, type ChainId } from "@summer_fi/sdk-client";
 import { useAccount } from "wagmi";
 import { fetchDepositTx } from "../../../fetchers/fetchDepositTx";
+import { useGlobalState } from "@/context/GlobalStateContext";
 
 interface DepositFeatureProps {
   chainId: ChainId;
@@ -17,6 +18,7 @@ export function DepositFeature({
   assetTokenSymbol,
 }: DepositFeatureProps) {
   const { address, isConnected } = useAccount();
+  const { environment } = useGlobalState();
 
   if (!isConnected || !address || !vaultId || !assetTokenSymbol) {
     return null;
@@ -34,6 +36,7 @@ export function DepositFeature({
         assetTokenSymbol,
       }}
       transactionChainId={chainId}
+      environment={environment}
     />
   );
 }

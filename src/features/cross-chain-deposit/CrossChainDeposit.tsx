@@ -9,6 +9,7 @@ import { type ChainId, type AddressValue } from "@summer_fi/sdk-client";
 import { fetchCrossChainTx } from "../../fetchers/fetchCrossChainTx";
 import type { CrossChainParams, VaultInfo } from "@/types";
 import { SUPPORTED_TOKENS, type TokenSymbol } from "../../lib/tokens-config";
+import { useGlobalState } from "../../context/GlobalStateContext";
 import { ChainSelector } from "../../components/ChainSelector";
 import { VaultSelector } from "../../components/VaultSelector";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,7 @@ import {
   ExclamationTriangleIcon,
   ExternalLinkIcon,
 } from "@radix-ui/react-icons";
-import { SupportedChainIds } from "../../sdk/chains";
+import { ChainIds } from "@/types";
 
 export interface TxData {
   to: string;
@@ -41,14 +42,14 @@ export interface TxData {
 
 const CrossChainDeposit: React.FC = () => {
   const { address, isConnected } = useAccount();
+  const { environment } = useGlobalState();
   const [isCreatingTx, setIsCreatingTx] = useState(false);
+  const [txCreationError, setTxCreationError] = useState<string | null>(null);
 
   // Chain and vault selection state
-  const [sourceChainId, setSourceChainId] = useState<ChainId>(
-    SupportedChainIds.Base
-  );
+  const [sourceChainId, setSourceChainId] = useState<ChainId>(ChainIds.Base);
   const [destinationChainId, setDestinationChainId] = useState<ChainId>(
-    SupportedChainIds.ArbitrumOne
+    ChainIds.ArbitrumOne
   );
   const [selectedVaultId, setSelectedVaultId] = useState<
     AddressValue | undefined
@@ -61,14 +62,14 @@ const CrossChainDeposit: React.FC = () => {
     useState<TokenSymbol>("ETH");
 
   const {
-    data: hash,
+    data: txHash,
     sendTransaction,
-    isPending,
-    error,
+    isPending: txIsPending,
+    error: txError,
   } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
-      hash,
+      hash: txHash,
     });
 
   // Handler functions for selectors
@@ -81,7 +82,7 @@ const CrossChainDeposit: React.FC = () => {
     // If destination chain is the same as new source chain, reset destination
     if (destinationChainId === chainId) {
       // Find a different chain to set as destination
-      const availableChains = Object.values(SupportedChainIds);
+      const availableChains = Object.values(ChainIds);
       const differentChain = availableChains.find((chain) => chain !== chainId);
       if (differentChain) {
         setDestinationChainId(differentChain);
@@ -120,6 +121,7 @@ const CrossChainDeposit: React.FC = () => {
 
     try {
       setIsCreatingTx(true);
+      setTxCreationError(null);
 
       const params: CrossChainParams = {
         sourceChainId,
@@ -129,9 +131,10 @@ const CrossChainDeposit: React.FC = () => {
         assetTokenSymbol: selectedVault.assetToken,
         sourceTokenSymbol: sourceTokenSymbol,
         amount: amount,
+        slippage: 50, // 0.5%
       };
 
-      const txData = await fetchCrossChainTx(params);
+      const txData = await fetchCrossChainTx(params, environment);
 
       await sendTransaction({
         to: txData.to as `0x${string}`,
@@ -140,7 +143,10 @@ const CrossChainDeposit: React.FC = () => {
         gas: BigInt(txData.gas),
       });
     } catch (error) {
-      console.error("Failed to create or send transaction:", error);
+      console.error("Failed to call API:", error);
+      setTxCreationError(
+        error instanceof Error ? error.message : "Failed to call API"
+      );
     } finally {
       setIsCreatingTx(false);
     }
@@ -157,7 +163,7 @@ const CrossChainDeposit: React.FC = () => {
           <ChainSelector
             value={sourceChainId}
             onValueChange={handleSourceChainChange}
-            defaultValue={SupportedChainIds.Base}
+            defaultValue={ChainIds.Base}
             hideLabel={true}
           />
         </div>
@@ -168,7 +174,7 @@ const CrossChainDeposit: React.FC = () => {
           <ChainSelector
             value={destinationChainId}
             onValueChange={handleDestinationChainChange}
-            defaultValue={SupportedChainIds.ArbitrumOne}
+            defaultValue={ChainIds.ArbitrumOne}
             hideLabel={true}
           />
         </div>
@@ -241,7 +247,7 @@ const CrossChainDeposit: React.FC = () => {
           amount &&
           parseFloat(amount) > 0 ? (
             <Button
-              disabled={isPending || isCreatingTx}
+              disabled={txIsPending || isCreatingTx}
               onClick={handleStartTransaction}
               className="w-full"
               size="lg"
@@ -251,7 +257,7 @@ const CrossChainDeposit: React.FC = () => {
                   <ClockIcon className="mr-2 h-4 w-4 animate-spin" />
                   Creating transaction...
                 </>
-              ) : isPending ? (
+              ) : txIsPending ? (
                 <>
                   <PersonIcon className="mr-2 h-4 w-4" />
                   Check wallet...
@@ -281,16 +287,17 @@ const CrossChainDeposit: React.FC = () => {
           )}
 
           <div className="space-y-3">
-            {hash && (
+            {txHash && (
               <Alert className="border-blue-200 bg-blue-50">
                 <ExternalLinkIcon className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-800">
                   <div className="flex items-center justify-between">
                     <span>
-                      Transaction sent: {hash.slice(0, 10)}...{hash.slice(-8)}
+                      Transaction sent: {txHash.slice(0, 10)}...
+                      {txHash.slice(-8)}
                     </span>
                     <a
-                      href={`https://basescan.org/tx/${hash}`}
+                      href={`https://basescan.org/tx/${txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:text-blue-800 underline text-xs"
@@ -317,11 +324,17 @@ const CrossChainDeposit: React.FC = () => {
                 </AlertDescription>
               </Alert>
             )}
-            {error && (
+            {txCreationError && (
+              <Alert variant="destructive">
+                <ExclamationTriangleIcon className="h-4 w-4" />
+                <AlertDescription>{txCreationError}</AlertDescription>
+              </Alert>
+            )}
+            {txError && (
               <Alert variant="destructive">
                 <ExclamationTriangleIcon className="h-4 w-4" />
                 <AlertDescription>
-                  {(error as BaseError).shortMessage || error.message}
+                  {(txError as BaseError).shortMessage || txError.message}
                 </AlertDescription>
               </Alert>
             )}

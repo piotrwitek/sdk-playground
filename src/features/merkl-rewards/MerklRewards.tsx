@@ -9,11 +9,11 @@ import { useGlobalState } from "@/context/GlobalStateContext";
 import { TokenRewardCard } from "./TokenRewardCard";
 
 export const MerklRewards: React.FC = () => {
-  const { chainId, userAddress } = useGlobalState();
+  const { chainId, userAddress, environment } = useGlobalState();
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["merklRewards", chainId, userAddress],
-    queryFn: () => fetchMerklRewards(chainId, userAddress ?? ""),
+  const { data, isFetching, error, refetch } = useQuery({
+    queryKey: ["merklRewards", chainId, userAddress, environment],
+    queryFn: () => fetchMerklRewards(chainId, userAddress ?? "", environment),
     enabled: !!userAddress && !!chainId,
   });
 
@@ -45,9 +45,9 @@ export const MerklRewards: React.FC = () => {
     <div className={cn("p-4")}>
       <h2 className="text-2xl font-semibold mb-4">Merkl Rewards</h2>
 
-      <SelectorsSection onSubmit={refetch} />
+      <SelectorsSection onSubmit={refetch} showFetchButton />
 
-      {isLoading && (
+      {isFetching && (
         <Card>
           <CardContent className="p-4">
             <div>Loading Merkl rewards...</div>
@@ -65,7 +65,7 @@ export const MerklRewards: React.FC = () => {
         </Card>
       )}
 
-      {data && !isLoading && !error && renderRewardsCards(data)}
+      {data && !isFetching && !error && renderRewardsCards(data)}
     </div>
   );
 };

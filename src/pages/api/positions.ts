@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { User } from "@summer_fi/sdk-client";
 import type { IArmadaPosition } from "@summer_fi/sdk-client/dist/sdk-common/common/interfaces/IArmadaPosition";
-import { sdk } from "../../clients/sdk-client";
+import { createSDK } from "../../clients/sdk-client";
+import { isValidEnvironment } from "@/types";
 
 export type Position = {
   id: string;
@@ -29,7 +30,7 @@ export default async function handler(
   }
 
   try {
-    const { chainId, address } = req.body;
+    const { chainId, address, environment } = req.body;
 
     if (!chainId) {
       return res.status(400).json({ error: "chainId is required" });
@@ -37,7 +38,16 @@ export default async function handler(
     if (!address) {
       return res.status(400).json({ error: "address is required" });
     }
+    if (!environment) {
+      return res.status(400).json({ error: "environment is required" });
+    }
+    if (!isValidEnvironment(environment)) {
+      return res.status(400).json({ 
+        error: "Invalid environment. Must be one of: local, staging, prod" 
+      });
+    }
 
+    const sdk = createSDK(environment);
     // fetch positions for Armada protocol
     const positions = await sdk.armada.users.getUserPositions({
       user: User.createFromEthereum(chainId, address),

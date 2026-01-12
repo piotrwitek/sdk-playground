@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { SupportedChainIds, getAvailableChains } from "../sdk/chains";
+import { ChainIds, getAvailableChains } from "../sdk/chains";
 
 interface ChainSelectorProps {
   value?: number;
@@ -18,7 +18,7 @@ interface ChainSelectorProps {
 export function ChainSelector({
   value,
   onValueChange,
-  defaultValue = SupportedChainIds.Base,
+  defaultValue = ChainIds.Base,
   className = "",
   hideLabel = false,
 }: ChainSelectorProps) {

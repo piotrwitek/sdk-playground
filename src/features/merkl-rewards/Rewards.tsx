@@ -8,14 +8,14 @@ import { SelectorsSection } from "@/components/SelectorsSection";
 import { formatSumrValue } from "../../lib/formatSumrValue";
 
 export const Rewards: React.FC = () => {
-  const { chainId, userAddress } = useGlobalState();
+  const { chainId, userAddress, environment } = useGlobalState();
 
-  const { data, isLoading, refetch, error } = useQuery<
+  const { data, isFetching, refetch, error } = useQuery<
     AggregatedRewards,
     Error
   >({
-    queryKey: ["rewards", chainId, userAddress],
-    queryFn: () => fetchRewards(chainId, userAddress ?? ""),
+    queryKey: ["rewards", chainId, userAddress, environment],
+    queryFn: () => fetchRewards(chainId, userAddress ?? "", environment),
     enabled: !!userAddress && !!chainId,
   });
 
@@ -40,7 +40,7 @@ export const Rewards: React.FC = () => {
       <h2 className="text-2xl font-semibold mb-4">Rewards</h2>
 
       <div className="mb-4">
-        <SelectorsSection onSubmit={refetch} />
+        <SelectorsSection onSubmit={refetch} showFetchButton />
       </div>
 
       {error && (
@@ -57,7 +57,7 @@ export const Rewards: React.FC = () => {
             <CardTitle>Total Rewards</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading
+            {isFetching
               ? "Loading..."
               : formatSumrValue(data ? data.total : undefined)}
           </CardContent>
@@ -68,7 +68,7 @@ export const Rewards: React.FC = () => {
             <CardTitle>Vault Usage</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading
+            {isFetching
               ? "Loading..."
               : formatSumrValue(data ? data.vaultUsage : undefined)}
           </CardContent>
@@ -79,7 +79,7 @@ export const Rewards: React.FC = () => {
             <CardTitle>Merkl Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading
+            {isFetching
               ? "Loading..."
               : formatSumrValue(data ? data.merkleDistribution : undefined)}
           </CardContent>
@@ -90,7 +90,7 @@ export const Rewards: React.FC = () => {
             <CardTitle>Vote Delegation</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading
+            {isFetching
               ? "Loading..."
               : formatSumrValue(data ? data.voteDelegation : undefined)}
           </CardContent>
@@ -101,8 +101,8 @@ export const Rewards: React.FC = () => {
             <CardTitle>Constituents Sum Check</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading && "Loading..."}
-            {!isLoading && (
+            {isFetching && "Loading..."}
+            {!isFetching && (
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <div>Total (Vault + Merkl + Vote)</div>
@@ -136,8 +136,8 @@ export const Rewards: React.FC = () => {
             <CardTitle>Vault Usage Per Chain</CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading && "Loading..."}
-            {!isLoading && data?.vaultUsagePerChain && (
+            {isFetching && "Loading..."}
+            {!isFetching && data?.vaultUsagePerChain && (
               <div className="space-y-2">
                 {Object.entries(data.vaultUsagePerChain).map(
                   ([chain, value]) => (

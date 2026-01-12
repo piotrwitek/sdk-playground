@@ -1,12 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { sdk } from "../../clients/sdk-client";
+import { createSDK } from "../../clients/sdk-client";
+import { isValidEnvironment } from "@/types";
 import type { VaultInfo, VaultsParams } from "@/types";
 import { FiatCurrency } from "@summer_fi/sdk-client";
 import BigNumber from "bignumber.js";
 import { SUMR_PRICE } from "../../sdk/constants";
 import { calculateMerklRewardApy } from "../../lib/utils";
 
-const fetchVaults = async ({ chainId }: VaultsParams): Promise<VaultInfo[]> => {
+const fetchVaults = async ({
+  chainId,
+  environment,
+}: VaultsParams): Promise<VaultInfo[]> => {
+  const sdk = createSDK(environment);
   // you can retrieve all user positions on a particular chain
   const vaults = await sdk.armada.users.getVaultInfoList({
     chainId,
@@ -112,13 +117,21 @@ export default async function handler(
   }
 
   try {
-    const { chainId } = req.body;
+    const { chainId, environment } = req.body;
 
     if (!chainId) {
       return res.status(400).json({ error: "chainId is required" });
     }
+    if (!environment) {
+      return res.status(400).json({ error: "environment is required" });
+    }
+    if (!isValidEnvironment(environment)) {
+      return res.status(400).json({ 
+        error: "Invalid environment. Must be one of: local, staging, prod" 
+      });
+    }
 
-    const vaults = await fetchVaults({ chainId });
+    const vaults = await fetchVaults({ chainId, environment });
     res.status(200).json(vaults);
   } catch (error) {
     console.error("Retrieve vaults API error:", error);

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { sdk } from "../../clients/sdk-client";
+import { createSDK } from "../../clients/sdk-client";
+import { isValidEnvironment } from "@/types";
 import { type ChainId } from "@summer_fi/sdk-client";
 
 export interface GetTokenBySymbolRequest {
@@ -24,14 +25,23 @@ export default async function handler(
   }
 
   try {
-    const { symbol, chainId } = req.query;
+    const { symbol, chainId, environment } = req.query;
 
     if (!symbol || !chainId) {
       return res.status(400).json({
         error: "Missing required parameters: symbol, chainId",
       });
     }
+    if (!environment) {
+      return res.status(400).json({ error: "environment is required" });
+    }
+    if (!isValidEnvironment(environment)) {
+      return res.status(400).json({ 
+        error: "Invalid environment. Must be one of: local, staging, prod" 
+      });
+    }
 
+    const sdk = createSDK(environment);
     const token = await sdk.tokens.getTokenBySymbol({
       symbol: symbol as string,
       chainId: parseInt(chainId as string) as ChainId,

@@ -5,15 +5,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import { GlobalStateProvider } from "./GlobalStateContext";
 import { arbitrum, base, mainnet, sonic } from "wagmi/chains";
+import { hyperliquid } from "@summer_fi/sdk-client";
 
 const config = createConfig(
   getDefaultConfig({
-    chains: [mainnet, base, arbitrum, sonic],
+    // @ts-expect-error wagmi types
+    chains: [mainnet, base, arbitrum, sonic, hyperliquid],
     transports: {
       [mainnet.id]: http(),
       [base.id]: http(),
       [arbitrum.id]: http(),
       [sonic.id]: http(),
+      [hyperliquid.id]: http(),
     },
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
     appName: "SDK playground",

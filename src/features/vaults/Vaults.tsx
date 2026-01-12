@@ -8,12 +8,12 @@ import { type ChainId, type AddressValue } from "@summer_fi/sdk-client";
 import type { VaultInfo } from "@/types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PersonIcon } from "@radix-ui/react-icons";
-import { SupportedChainIds } from "../../sdk/chains";
+import { ChainIds } from "@/types";
 
 export default function Vaults() {
   const { address, isConnected } = useAccount();
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
-    SupportedChainIds.Base
+    ChainIds.Base
   );
   const [selectedVaultId, setSelectedVaultId] = useState<
     AddressValue | undefined
@@ -41,7 +41,7 @@ export default function Vaults() {
         <ChainSelector
           value={selectedChainId}
           onValueChange={handleChainChange}
-          defaultValue={SupportedChainIds.Base}
+          defaultValue={ChainIds.Base}
         />
         <VaultSelector
           chainId={selectedChainId}

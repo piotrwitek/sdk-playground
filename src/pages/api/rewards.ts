@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { sdk } from "../../clients/sdk-client";
+import { createSDK } from "../../clients/sdk-client";
+import { isValidEnvironment, ChainIds } from "@/types";
 import { User } from "@summer_fi/sdk-client";
-import { SupportedChainIds } from "../../sdk/chains";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,12 +20,20 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { address, chainId } = req.query;
+  const { address, chainId, environment } = req.query;
   if (!address) {
     return res.status(400).json({ error: "address is required" });
   }
   if (!chainId) {
     return res.status(400).json({ error: "chainId is required" });
+  }
+  if (!environment) {
+    return res.status(400).json({ error: "environment is required" });
+  }
+  if (!isValidEnvironment(environment)) {
+    return res.status(400).json({ 
+      error: "Invalid environment. Must be one of: local, staging, prod" 
+    });
   }
 
   try {
@@ -35,14 +43,15 @@ export default async function handler(
     }
 
     const resolvedChainId =
-      SupportedChainIds[
-        parsedChainId as unknown as keyof typeof SupportedChainIds
+      ChainIds[
+        parsedChainId as unknown as keyof typeof ChainIds
       ] ?? parsedChainId;
 
     const user = User.createFromEthereum(
       resolvedChainId,
       address as `0x${string}`
     );
+    const sdk = createSDK(environment);
     const data = await sdk.armada.users.getAggregatedRewardsIncludingMerkl({
       user,
     });

@@ -11,11 +11,14 @@ import { useGlobalState } from "@/context/GlobalStateContext";
 export type ArmadaPosition = IArmadaPosition;
 
 export const Positions: React.FC = () => {
-  const { userAddress, chainId } = useGlobalState();
+  const { userAddress, chainId, environment } = useGlobalState();
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["positions", chainId, userAddress],
-    queryFn: () => fetchPositions(chainId, userAddress ?? ""),
+  const { data, error, refetch, isFetching } = useQuery({
+    queryKey: ["positions", chainId, userAddress, environment],
+    queryFn: () =>
+      userAddress
+        ? fetchPositions(chainId, userAddress, environment)
+        : Promise.resolve([]),
     enabled: !!userAddress && !!chainId,
   });
 
@@ -23,9 +26,9 @@ export const Positions: React.FC = () => {
     <div className={cn("p-4")}>
       <h2 className="text-2xl font-semibold mb-4">Positions</h2>
 
-      <SelectorsSection onSubmit={refetch} />
+      <SelectorsSection onSubmit={refetch} showFetchButton />
 
-      {isLoading && <div>Loading...</div>}
+      {isFetching && <div>Loading...</div>}
       {error && <div className="text-red-500">{(error as Error).message}</div>}
 
       {Array.isArray(data) && data.length === 0 && (
